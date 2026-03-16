@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Prodigal God — Timothy Keller · ReadLess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fff;
+    --text: #0a0a0a;
+    --subtext: #444;
+    --label: #888;
+    --divider: #e5e5e5;
+    --tag-bg: #f0f0f0;
+    --tag-color: #444;
+    --thesis-border: #111;
+    --thesis-color: #111;
+    --pq-border: #0a0a0a;
+    --pq-text: #111;
+    --table-header-bg: #0a0a0a;
+    --table-header-text: #fff;
+    --table-row-alt: #fafafa;
+    --table-border: #e0e0e0;
+    --reflect-numeral: #e0e0e0;
+    --reflect-text: #0a0a0a;
+    --footer-border: #e5e5e5;
+    --footer-text: #aaa;
+    --topbar-border: #111;
+    --title-color: #0a0a0a;
+    --subtitle-color: #555;
+    --back-color: #888;
+
+    --green: #0a8a5c;
+    --red: #c0392b;
+    --amber: #b07800;
+    --blue: #1a4db0;
+    --purple: #5b3fa0;
+    --grey: #888;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--back-color);
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--text); }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1.5px solid var(--topbar-border);
+    margin-bottom: 40px;
+  }
+  .topbar-left {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+
+  .book-header { margin-bottom: 36px; }
+  .book-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+    color: var(--title-color);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .book-subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--subtitle-color);
+    margin-bottom: 16px;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    border-radius: 4px;
+    padding: 4px 11px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .date-added {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-top: 12px;
+  }
+
+  .section-divider {
+    border: none;
+    border-top: 0.5px solid var(--divider);
+    margin: 36px 0;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .label-green  { color: var(--green); }
+  .label-red    { color: var(--red); }
+  .label-amber  { color: var(--amber); }
+  .label-blue   { color: var(--blue); }
+  .label-purple { color: var(--purple); }
+  .label-grey   { color: var(--grey); }
+
+  .thesis {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--thesis-color);
+    border-left: 2px solid var(--thesis-border);
+    padding-left: 16px;
+  }
+
+  .insight-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .insight-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 7px;
+  }
+  .dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+  }
+  .dot-green { background: var(--green); }
+  .dot-red   { background: var(--red); }
+  .dot-blue  { background: var(--blue); }
+
+  .sub-bullets {
+    list-style: none;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sub-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 12.5px;
+    color: var(--subtext);
+    line-height: 1.55;
+  }
+  .sub-dot {
+    flex-shrink: 0;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #bbb;
+    margin-top: 7px;
+  }
+
+  .pull-quote-wrap {
+    border-top: 1.5px solid var(--pq-border);
+    border-bottom: 1.5px solid var(--pq-border);
+    padding: 28px 0;
+    margin: 36px 0;
+  }
+  .pull-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--pq-text);
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 0.5px solid var(--table-border);
+    font-size: 13px;
+  }
+  .compare-table thead tr { background: var(--table-header-bg); color: var(--table-header-text); }
+  .compare-table thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .compare-table tbody tr:nth-child(even) { background: var(--table-row-alt); }
+  .compare-table tbody tr:nth-child(odd)  { background: var(--bg); }
+  .compare-table tbody td {
+    padding: 10px 14px;
+    border-top: 0.5px solid var(--table-border);
+    color: var(--subtext);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .compare-table tbody td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    width: 28%;
+  }
+
+  .reflection-list { display: flex; flex-direction: column; gap: 28px; }
+  .reflection-item { display: flex; align-items: flex-start; gap: 16px; }
+  .reflect-numeral {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--reflect-numeral);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .reflect-question { font-size: 13px; color: var(--reflect-text); line-height: 1.6; }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid var(--footer-border);
+    padding-top: 18px;
+    margin-top: 48px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--footer-text);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0a;
+      --text: #f0f0f0;
+      --subtext: #888;
+      --label: #555;
+      --divider: #1a1a1a;
+      --tag-bg: #1a1a1a;
+      --tag-color: #888;
+      --thesis-border: #555;
+      --thesis-color: #ccc;
+      --pq-border: #444;
+      --pq-text: #ccc;
+      --table-header-bg: #1a1a1a;
+      --table-header-text: #f0f0f0;
+      --table-row-alt: #111;
+      --table-border: #1a1a1a;
+      --reflect-numeral: #222;
+      --reflect-text: #888;
+      --footer-border: #1a1a1a;
+      --footer-text: #444;
+      --topbar-border: #333;
+      --title-color: #f0f0f0;
+      --subtitle-color: #888;
+      --back-color: #555;
+    }
+    .compare-table tbody tr:nth-child(odd) { background: #0a0a0a; }
+    .sub-dot { background: #444; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="../../">← All books</a>
+
+<div class="topbar">
+  <div class="topbar-left">ReadLess · Book Intelligence</div>
+  <div class="topbar-right">
+    <span>Theology &amp; Gospel</span>
+    <span>20 min read</span>
+  </div>
+</div>
+
+<div class="book-header">
+  <div class="book-title">The Prodigal God</div>
+  <div class="book-subtitle">Timothy Keller · 2008</div>
+  <div class="tags">
+    <span class="tag">Gospel</span>
+    <span class="tag">Grace</span>
+    <span class="tag">Theology</span>
+    <span class="tag">Discipleship</span>
+  </div>
+  <div class="date-added">Added March 2026</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- CORE THESIS -->
+<div class="section-label label-grey">Core Thesis</div>
+<p class="thesis">
+  The parable of the prodigal son is not, at its center, a story about one lost son who returns — it is a story about two lost sons, and the radical, costly love of a father who runs toward both of them. Keller's central argument is that Christianity's essential message has been captured by the elder brother's religion — moralism, rule-keeping, and a transactional relationship with God — and that this form of lostness is as damning and far more hidden than outright rebellion. True Christianity is neither licentiousness nor moralism, but a third way: the grace of a God so prodigal in love that he bankrupts himself to bring both sons home.
+</p>
+
+<hr class="section-divider">
+
+<!-- KEY INSIGHTS -->
+<div class="section-label label-green">Key Insights</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>There are two ways to be lost — and the elder brother's form of lostness is more spiritually dangerous than the younger brother's</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The younger son's rebellion is visible and self-aware — he knows he is lost, which is why repentance is possible. The elder son's lostness is invisible even to himself: he believes he has earned his place and deserves his father's goods.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Elder-brother religion is the animating spirit of formal religiosity: rule-following as a strategy for securing God's favor, not as a response to having already received it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The parable's original audience — Pharisees — were elder brothers; Jesus told this story specifically as an indictment of religious respectability, not as a warm story about a returning rebel.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller's diagnostic: the elder son is identified not by his behavior (which looks impeccable) but by his response to grace being extended to others — outrage rather than rejoicing.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Both brothers share the same root sin: they want the father's goods rather than the father himself</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The younger son demands his inheritance — essentially wishing his father dead — and departs. But the elder son has also never genuinely loved his father; he has been working for wages, using obedience to secure what he wants.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This reveals that the deepest form of sin is not rebellion but the instrumentalization of God — treating him as a means to other ends (comfort, approval, blessing, moral superiority) rather than as the end himself.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This redefines idolatry: you can be deeply religious and still be an idolater — using religion to get what you actually love, which is not God.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The gospel's diagnostic cuts deeper than behavior: the question is not "are you moral?" but "do you love God for who he is, or for what he provides?"</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The father's response to both sons reveals a grace that is scandalously costly and structurally offensive to merit-based thinking</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The father runs to the returning younger son — a culturally shameful act for a patriarch — before the son has completed his prepared speech of contrition, before anything has been earned or proven.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The robe, ring, and feast are not merely generous; they are restoration to full sonship — as if the departure had not happened. This is not merely forgiveness but reinstatement without conditions.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The father then goes out to the elder son — again, a posture of humility that a patriarch would not take — and pleads with him to come in. Grace pursues the self-righteous with the same urgency as the obviously lost.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller's title captures this: the word "prodigal" means recklessly extravagant — it describes not only the younger son's squandering, but the father's ruinous, unconditional outpouring of love toward both.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The gospel Jesus preached is distinct from both "religion" (elder brother) and "irreligion" (younger brother) — it is a third way that subverts both</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Secular culture assumes Christianity means elder-brother moralism; the critique of "organized religion" is almost always a critique of the elder son. But the parable shows Jesus critiquing the elder son just as sharply.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The gospel does not call the younger son to become the elder son (clean up your behavior) — it calls both sons to the same thing: to come to the feast on the basis of the father's love, not their own merit or effort.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This makes genuine Christianity simultaneously more demanding than moralism (it requires dying to self-justification, which is harder than behavioral change) and more gracious (it is not conditional on performance).</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller's cultural contribution: this framework explains why both irreligious and overly religious people feel Christianity is talking past them — because they're hearing the message filtered through one son's story rather than both.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The elder son's inability to enter the feast points to a son who is never mentioned: the true elder son who actually left the feast to bring us home</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller's most theologically precise move: the parable ends with the elder brother outside, refusing to enter. This is where the story leaves a gap — in reality, someone had to go out and pay the cost to bring the younger son back and to restore the household's honor.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Jesus is the true elder brother: he left the feast of heaven, took on the shame and cost that should have fallen on us, and accomplished what the parable's elder son refused to do — gave up his rights for the sake of his siblings.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is why the gospel is not just a message about God's generous attitude — it is a message about a specific, costly, historical act. Prodigal grace has a price tag; Jesus paid it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This also reorients Christian identity: we are not the good elder sons; we are the younger brother who has been welcomed home by the true elder brother's sacrifice.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<!-- PULL QUOTE -->
+<div class="pull-quote-wrap">
+  <div class="pull-quote">"Jesus's teaching consistently attracted the irreligious while offending the Bible-believing, church-going people of his day — doesn't that say something to us?"</div>
+</div>
+
+<!-- WATCH OUT FOR -->
+<div class="section-label label-red">Watch Out For</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Using "elder brother" as a label to critique others while exempting yourself from the same diagnosis</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The elder brother trap is, by definition, self-invisible — those most deeply in it are least likely to recognize themselves. Using the category to describe other Christians is itself a symptom of elder-brother thinking.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller's framework is a mirror to hold to oneself, not a taxonomy for categorizing others' spiritual failures.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The diagnostic that applies to you: resentment when others receive grace they don't deserve; a sense that your years of faithfulness should count for more; inability to rejoice at others' restoration.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Reading the younger brother's path as a template — "just come home; behavior doesn't matter" — collapses grace into licentiousness</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller is not arguing that repentance is costless or that behavior is irrelevant to Christian life — the younger son genuinely repented and returned.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The point is that repentance flows from receiving the father's love, not from moral performance — but genuine reception produces genuine transformation, not indifference to character.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Grace that produces no change in desire or direction was not genuinely received; the feast is not the end of the story but the beginning of a renewed life in the father's household.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Treating this as primarily a book about the younger brother — the conventional reading Keller is explicitly correcting</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Most readers come to this book already sympathetic to the younger son and already critical of Pharisaism — this allows the elder-brother critique to land as validation rather than conviction.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The book's primary challenge is to the respectable, church-going, theologically orthodox reader — not to the obviously prodigal. If you finish it feeling mostly encouraged, you may have missed its sharpest edge.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The question to sit with: "In what areas of my life am I still working for wages rather than living as a son?"</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Reducing the parable to a psychological framework and losing its specifically christological claim</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller's elder/younger brother taxonomy is genuinely illuminating as a personality or spiritual typology, but its power depends on the christological move at the end — Jesus as the true elder brother who paid the cost.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Without that claim, the book reduces to an interesting analysis of two failure modes; with it, the analysis becomes the diagnosis that points toward a specific remedy.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The gospel offer Keller makes is not "try to be less elder-brotherly" but "receive the grace of the one who was the true elder brother in your place" — these are structurally different calls to action.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- CONCEPT COMPARISON -->
+<div class="section-label label-amber">Concept Comparison</div>
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Elder Brother Religion</th>
+      <th>Gospel Grace</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Relationship to God</td>
+      <td>Transactional: obedience in exchange for God's favor, blessing, and approval</td>
+      <td>Filial: obedience as response to already-received love, from a secure identity as son or daughter</td>
+    </tr>
+    <tr>
+      <td>Motivation for behavior</td>
+      <td>Fear of consequences, desire for reward, maintaining reputation and moral standing</td>
+      <td>Gratitude and love; the natural expression of a transformed heart toward a father who gave everything</td>
+    </tr>
+    <tr>
+      <td>Response to others' failure</td>
+      <td>Judgment and distance — their failure is an offense against the moral order you've sacrificed to uphold</td>
+      <td>Compassion — you know your own need for grace too well to withhold it; restoration is cause for celebration</td>
+    </tr>
+    <tr>
+      <td>Inner experience</td>
+      <td>Joyless duty, resentment, a quiet sense of not receiving what you deserve despite all your effort</td>
+      <td>Freedom; rest; the ability to receive criticism and failure without identity collapse</td>
+    </tr>
+    <tr>
+      <td>Lostness</td>
+      <td>Invisible to itself — the elder son is sure he is home; he does not know he is outside</td>
+      <td>Known and named — the younger son "came to his senses"; self-knowledge precedes and enables return</td>
+    </tr>
+    <tr>
+      <td>What it produces</td>
+      <td>Religious performance that pleases institutions and social groups while the heart remains cold and far from God</td>
+      <td>Genuine transformation: obedience that is free, love that is spontaneous, joy that survives suffering</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- APPLY THIS -->
+<div class="section-label label-blue">Apply This</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Run the elder-brother diagnostic on your current spiritual state using Keller's specific indicators</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Write honest answers to these three questions: (1) When someone less faithful than me receives blessing or recognition, what is my first internal response — rejoicing or resentment? (2) Do I feel that my years of faithfulness give me a claim on God that newer or less committed believers don't have? (3) Am I obeying primarily to avoid consequences or to secure blessings rather than out of love?</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The goal is not condemnation but accurate diagnosis — you cannot receive a remedy you don't know you need.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Any "yes" to the above is not a reason for shame but a door: it locates the precise area where the gospel's message of sonship rather than servitude needs to be applied.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Identify the specific thing you are currently "slaving" for in your religious life</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The elder son says "all these years I've been slaving for you" — this reveals that his obedience was labor for wages, not love for a father. Complete this sentence honestly: "I have been faithful/obedient/disciplined in [X] because I am trying to secure [Y]."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Common answers: security, God's protection of people I love, a sense of moral superiority, freedom from guilt, professional or relational approval, certainty that I am genuinely saved.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Naming the underlying exchange does not require abandoning the practice — it requires reorienting it. The same action (prayer, service, Bible reading) can proceed from either elder-brother or gospel motivation; the reorientation is interior.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Meditate specifically on the christological claim at the book's end as the remedy, not just the diagnosis</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Take 15 minutes with this single idea: Jesus, as the true elder brother, left the feast to which he had every right, took on shame and cost he did not deserve, and accomplished what neither brother in the parable was willing to do.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The elder-brother problem is not solved by trying harder to be less elder-brotherly — it is dissolved by receiving, with genuine surprise and gratitude, the grace of the one who did what we couldn't and shouldn't have needed to ask him to do.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Concrete practice: write one paragraph in your journal from the perspective of someone who has just been welcomed home by this true elder brother — what does that person feel? What do they now want?</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Use the "feast" as a concrete test for your church or small group community</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Keller argues that a community shaped by the gospel of the father will look like the feast — welcoming to those who don't yet belong, joyful rather than merely dutiful, oriented around the father's abundance rather than the elder son's ledger.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Evaluate your primary Christian community honestly: when someone with a "younger brother" past shows up, is the authentic first response welcome or wariness? Do long-timers resent the attention given to new or struggling members?</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>If the community is more elder-brother than feast-shaped, identify one concrete change you could initiate — a posture, a practice, a conversation — that would make the feast more visible in that space.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Apply the "both sons wanted the goods, not the father" test to your own relationship with God this week</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>For one week, when you pray, begin by identifying what you are actually coming to God for. List it honestly. Then ask: if God granted none of these things but offered only himself — his presence, his love, his character — would that be sufficient?</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The discomfort of that question is diagnostic. It reveals the degree to which God is being used as an instrument for other desires rather than loved as the desire himself.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is not a guilt exercise but a clarifying one — it locates precisely where the gospel's deepest work still needs to happen in your actual interior life, not your theological convictions.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- REFLECTION QUESTIONS -->
+<div class="section-label label-purple">Reflection Questions</div>
+<div class="reflection-list">
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">1</div>
+    <div class="reflect-question">Keller argues that the elder son is lost without knowing it — his respectability and faithfulness are precisely what prevents him from recognizing his distance from the father. In which areas of your life is your obedience most driven by a sense of what you are owed rather than by love? Not in theory — but in the specific places where resentment surfaces when God seems to reward others who haven't earned it the way you have?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">2</div>
+    <div class="reflect-question">Both sons, Keller says, wanted the father's goods rather than the father himself. If you stripped away everything God provides — security, meaning, community, the comfort of faith, even the hope of heaven — and were left with only God himself, would that be enough? Sit with that question honestly before answering. What does your answer reveal about what you are actually worshipping?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">3</div>
+    <div class="reflect-question">The parable ends with the elder son outside, refusing to enter the feast. The father goes out and pleads with him — an act of extraordinary humility. Is there a feast you are currently refusing to enter, or an invitation from the father you are resisting because it seems to require relinquishing your grievance, your record, or your sense of deserving? What is keeping you outside?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">4</div>
+    <div class="reflect-question">Keller's christological claim is that Jesus is the true elder brother — he left his rightful place, paid a cost he didn't owe, to bring us home. If that is true, not as a theological proposition but as something that actually happened on your behalf, what changes? Not what should change — but what, if you received it as genuinely true about you, would you find yourself wanting to do differently today?</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>ReadLess · Book Intelligence</span>
+  <span>The Prodigal God · Timothy Keller · 2008</span>
+</div>
+
+</body>
+</html>

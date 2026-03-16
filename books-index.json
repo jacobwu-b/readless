@@ -75,5 +75,16 @@
     "cover": "https://covers.openlibrary.org/b/isbn/9780787947354-L.jpg",
     "date_added": "2026-03-01",
     "read_time": "20 min"
+  },
+  {
+    "slug": "the-prodigal-god",
+    "title": "The Prodigal God",
+    "author": "Timothy Keller",
+    "year": 2008,
+    "tags": ["Gospel", "Grace", "Theology", "Discipleship"],
+    "category": "Theology & Gospel",
+    "cover": "https://covers.openlibrary.org/b/isbn/9780525950790-L.jpg",
+    "date_added": "2026-03-01",
+    "read_time": "20 min"
   }
 ]
