@@ -42,5 +42,16 @@
     "cover": "https://covers.openlibrary.org/b/isbn/9781575938615-L.jpg",
     "date_added": "2026-03-01",
     "read_time": "25 min"
+  },
+  {
+    "slug": "praising",
+    "title": "Praising",
+    "author": "Watchman Nee",
+    "year": 1997,
+    "tags": ["Worship", "Spiritual Formation", "Prayer", "Faith"],
+    "category": "Spiritual Formation",
+    "cover": "https://covers.openlibrary.org/b/isbn/9780736318174-L.jpg",
+    "date_added": "2026-03-01",
+    "read_time": "20 min"
   }
 ]

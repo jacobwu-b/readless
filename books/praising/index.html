@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praising — Watchman Nee · ReadLess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fff;
+    --text: #0a0a0a;
+    --subtext: #444;
+    --label: #888;
+    --divider: #e5e5e5;
+    --tag-bg: #f0f0f0;
+    --tag-color: #444;
+    --thesis-border: #111;
+    --thesis-color: #111;
+    --pq-border: #0a0a0a;
+    --pq-text: #111;
+    --table-header-bg: #0a0a0a;
+    --table-header-text: #fff;
+    --table-row-alt: #fafafa;
+    --table-border: #e0e0e0;
+    --reflect-numeral: #e0e0e0;
+    --reflect-text: #0a0a0a;
+    --footer-border: #e5e5e5;
+    --footer-text: #aaa;
+    --topbar-border: #111;
+    --title-color: #0a0a0a;
+    --subtitle-color: #555;
+    --back-color: #888;
+
+    --green: #0a8a5c;
+    --red: #c0392b;
+    --amber: #b07800;
+    --blue: #1a4db0;
+    --purple: #5b3fa0;
+    --grey: #888;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+
+  /* BACK LINK */
+  .back-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--back-color);
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--text); }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1.5px solid var(--topbar-border);
+    margin-bottom: 40px;
+  }
+  .topbar-left {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+
+  /* HEADER */
+  .book-header { margin-bottom: 36px; }
+  .book-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+    color: var(--title-color);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .book-subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--subtitle-color);
+    margin-bottom: 16px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    border-radius: 4px;
+    padding: 4px 11px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .date-added {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-top: 12px;
+  }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    border: none;
+    border-top: 0.5px solid var(--divider);
+    margin: 36px 0;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .label-green  { color: var(--green); }
+  .label-red    { color: var(--red); }
+  .label-amber  { color: var(--amber); }
+  .label-blue   { color: var(--blue); }
+  .label-purple { color: var(--purple); }
+  .label-grey   { color: var(--grey); }
+
+  /* THESIS */
+  .thesis {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--thesis-color);
+    border-left: 2px solid var(--thesis-border);
+    padding-left: 16px;
+  }
+
+  /* BULLET SYSTEM */
+  .insight-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .insight-item {}
+  .insight-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 7px;
+  }
+  .dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+  }
+  .dot-green { background: var(--green); }
+  .dot-red   { background: var(--red); }
+  .dot-blue  { background: var(--blue); }
+
+  .sub-bullets {
+    list-style: none;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sub-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 12.5px;
+    color: var(--subtext);
+    line-height: 1.55;
+  }
+  .sub-dot {
+    flex-shrink: 0;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #bbb;
+    margin-top: 7px;
+  }
+
+  /* PULL QUOTE */
+  .pull-quote-wrap {
+    border-top: 1.5px solid var(--pq-border);
+    border-bottom: 1.5px solid var(--pq-border);
+    padding: 28px 0;
+    margin: 36px 0;
+  }
+  .pull-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--pq-text);
+  }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 0.5px solid var(--table-border);
+    font-size: 13px;
+  }
+  .compare-table thead tr { background: var(--table-header-bg); color: var(--table-header-text); }
+  .compare-table thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .compare-table tbody tr:nth-child(even) { background: var(--table-row-alt); }
+  .compare-table tbody tr:nth-child(odd)  { background: var(--bg); }
+  .compare-table tbody td {
+    padding: 10px 14px;
+    border-top: 0.5px solid var(--table-border);
+    color: var(--subtext);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .compare-table tbody td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    width: 28%;
+  }
+
+  /* REFLECTION QUESTIONS */
+  .reflection-list { display: flex; flex-direction: column; gap: 28px; }
+  .reflection-item { display: flex; align-items: flex-start; gap: 16px; }
+  .reflect-numeral {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--reflect-numeral);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .reflect-question { font-size: 13px; color: var(--reflect-text); line-height: 1.6; }
+
+  /* FOOTER */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid var(--footer-border);
+    padding-top: 18px;
+    margin-top: 48px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--footer-text);
+  }
+
+  /* DARK MODE */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0a;
+      --text: #f0f0f0;
+      --subtext: #888;
+      --label: #555;
+      --divider: #1a1a1a;
+      --tag-bg: #1a1a1a;
+      --tag-color: #888;
+      --thesis-border: #555;
+      --thesis-color: #ccc;
+      --pq-border: #444;
+      --pq-text: #ccc;
+      --table-header-bg: #1a1a1a;
+      --table-header-text: #f0f0f0;
+      --table-row-alt: #111;
+      --table-border: #1a1a1a;
+      --reflect-numeral: #222;
+      --reflect-text: #888;
+      --footer-border: #1a1a1a;
+      --footer-text: #444;
+      --topbar-border: #333;
+      --title-color: #f0f0f0;
+      --subtitle-color: #888;
+      --back-color: #555;
+    }
+    .compare-table tbody tr:nth-child(odd) { background: #0a0a0a; }
+    .sub-dot { background: #444; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="../../">← All books</a>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">ReadLess · Book Intelligence</div>
+  <div class="topbar-right">
+    <span>Spiritual Formation</span>
+    <span>20 min read</span>
+  </div>
+</div>
+
+<!-- BOOK HEADER -->
+<div class="book-header">
+  <div class="book-title">Praising</div>
+  <div class="book-subtitle">Watchman Nee · 1997</div>
+  <div class="tags">
+    <span class="tag">Worship</span>
+    <span class="tag">Spiritual Formation</span>
+    <span class="tag">Prayer</span>
+    <span class="tag">Faith</span>
+  </div>
+  <div class="date-added">Added March 2026</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- CORE THESIS -->
+<div class="section-label label-grey">Core Thesis</div>
+<p class="thesis">
+  Praise is not a response to favorable circumstances but the highest act of spiritual warfare and the primary channel through which God's children engage with His sovereignty — and therefore it must precede understanding, not follow it. Watchman Nee argues that faith-filled praise, offered in the face of trial and confusion, is what enthrones God in a situation and routes the enemy's attack back against himself. The believer who masters praise has mastered the deepest principle of Christian victory, because praise is not about feeling; it is about establishing, through declaration, where ultimate authority lies.
+</p>
+
+<hr class="section-divider">
+
+<!-- KEY INSIGHTS -->
+<div class="section-label label-green">Key Insights</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Praise is categorically different from prayer — it moves in the opposite direction</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Prayer typically brings our need upward to God; praise declares God's sovereignty downward into the situation — the postures are opposite.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Prayer begins in awareness of lack; praise begins in awareness of God's character — what He is regardless of what we feel or what is happening.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is not a liturgical distinction but a functional one: praise shifts the believer's orientation from the problem as the dominant reality to God as the dominant reality.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee uses Jehoshaphat's battle (2 Chronicles 20) as the paradigm: the singers went out first, before the soldiers — praise was the offensive weapon, not the celebratory aftermath.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Praise offered before understanding is the purest and most powerful form — "the sacrifice of praise"</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Praising God after circumstances improve is natural and costs nothing; praising in the midst of darkness is the sacrifice Hebrews 13:15 describes — it costs the self-life something.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>When we praise before we understand, we are explicitly declaring that God's character is more reliable than our interpretation of events — this is faith operating at full capacity.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's Paul-and-Silas example is precise: they sang at midnight, in stocks, in prison — not because they understood the plan, but because praise was the only true response to God's sovereignty regardless of appearances.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The consequence was immediate and physical: the prison doors opened. Nee reads this not as coincidence but as the normal fruit of praise-as-faith operating in a spiritually real universe.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>God is "enthroned on the praises of Israel" — praise literally constitutes His throne in a situation</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee draws on Psalm 22:3 to argue that praise is not merely directed at God but is the mechanism through which His authority is installed as operative in a given circumstance.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Where there is no praise, God has no throne — not because His sovereignty is diminished, but because the channel through which it flows into visible reality has been closed.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This reframes praise as infrastructural, not emotional — it is the architecture that permits divine governance to be expressed in earthly situations.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Practically: the believer who complains in trial has not merely failed emotionally; they have structurally blocked the pathway through which God's power would have moved.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Satan cannot remain where genuine praise is sustained — praise functions as direct spiritual warfare</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The enemy's primary weapon is accusation and discouragement; praise is the precise counter-weapon because it asserts the opposite of what he is proclaiming.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Praise does not merely neutralize the enemy's attacks — it reverses their direction: what was meant to crush the believer becomes the occasion for God's glory to be displayed.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee uses the Jehoshaphat account again: the ambushers turned on one another — the enemy's own forces became the instrument of their destruction once praise was operating.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This means every trial is, in Nee's framework, an invitation to warfare through praise — the believer chooses whether to fight or to capitulate by how they respond in the first moment of pressure.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Obedience and understanding each have a proper relationship to praise — but neither is its prerequisite</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee distinguishes two corruptions: waiting to praise until you feel obedient enough (making praise the reward of spiritual achievement) and waiting until you understand God's reasons (making praise conditional on comprehension).</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Both are forms of control — they make praise something we grant God once He has satisfied our conditions, which inverts the proper relationship entirely.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>True obedience flows from praise, not before it; and understanding deepens through praise, not before it — the act of praising repositions the will and opens the mind.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This produces a counterintuitive strategy: when you least understand and least feel like obeying is precisely when praise is most needed and most powerful.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<!-- PULL QUOTE -->
+<div class="pull-quote-wrap">
+  <div class="pull-quote">"The Christian life soars through praises. To praise is to transcend everything to touch the Lord."</div>
+</div>
+
+<!-- WATCH OUT FOR -->
+<div class="section-label label-red">Watch Out For</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Treating praise as a formula to manipulate outcomes rather than an act of genuine faith</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's teaching can be weaponized into a prosperity-adjacent technique: "If I praise enough, God must act." This is the tree of knowledge in liturgical clothing.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The test: if the praise stops the moment the desired outcome doesn't materialize, it was never genuine praise — it was a transaction.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Authentic praise holds God's character as worthy regardless of whether the prison doors open — the opening is a fruit of praise, not its contractual guarantee.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Confusing emotional exuberance with genuine spiritual praise</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's praise is primarily a volitional act of faith, not an emotional experience — it can be offered quietly, in grief, or against every feeling.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>High-energy worship environments can produce the sensation of praise without its substance; conversely, quiet declarations of God's goodness in the dark may be the most powerful praise of all.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The "sacrifice" in "sacrifice of praise" is precisely the cost to emotional comfort — genuine praise is often offered against the grain of feeling, not in alignment with it.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Using praise as spiritual bypass — avoiding legitimate grief, lament, or honest engagement with suffering</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's framework is not a mandate to suppress honest emotion or skip the psalms of lament — the Psalter itself contains both raw grief and doxology, often in the same passage.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Misapplied, this teaching produces believers who perform praise-language while denying real pain — this is not faith, it is dissociation dressed as spirituality.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's Paul and Silas sang at midnight — they were also in real pain, in real chains. The praise did not deny the reality; it refused to let the reality have the final word.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Reading "praise enthroning God" as implying that God is powerless without our praise</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's point is about the believer's access to God's sovereignty, not a limit on that sovereignty itself — God does not become more omnipotent when we praise.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The channel metaphor: water exists in the reservoir regardless of whether the tap is open; praise opens the tap, it does not create the water.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Misreading this produces either pride (I unleashed God's power!) or despair (I didn't praise enough so God couldn't act) — both distort the actual relationship.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- CONCEPT COMPARISON -->
+<div class="section-label label-amber">Concept Comparison</div>
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Complaint / Murmuring</th>
+      <th>Praise / Sacrifice of Praise</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Starting orientation</td>
+      <td>The problem is the dominant reality; God is expected to explain Himself</td>
+      <td>God's character is the dominant reality; the problem is viewed through that lens</td>
+    </tr>
+    <tr>
+      <td>Spiritual effect</td>
+      <td>Closes the channel between God's sovereignty and the situation; amplifies the enemy's position</td>
+      <td>Opens the channel; establishes God's throne in the circumstance; disarms the enemy</td>
+    </tr>
+    <tr>
+      <td>Relationship to feeling</td>
+      <td>Follows feeling naturally and without cost — the path of least resistance</td>
+      <td>Often offered against feeling; the costliness is precisely what makes it a "sacrifice"</td>
+    </tr>
+    <tr>
+      <td>What it declares</td>
+      <td>Implicitly: "God is not good, not wise, or not sovereign in this moment"</td>
+      <td>Explicitly: "God is good, wise, and sovereign — even here, even now, even this"</td>
+    </tr>
+    <tr>
+      <td>Long-term trajectory</td>
+      <td>Deepening discouragement; spiritual stagnation; increasing vulnerability to accusation</td>
+      <td>A spirit that soars; growing capacity to praise in harder circumstances; increasing victory</td>
+    </tr>
+    <tr>
+      <td>Biblical archetype</td>
+      <td>Israel in the wilderness — murmuring produced a generation that never entered the promise</td>
+      <td>Paul and Silas at midnight; Jehoshaphat's singers — praise produced immediate, miraculous deliverance</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- APPLY THIS -->
+<div class="section-label label-blue">Apply This</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Institute a "praise before processing" rule for situations that provoke complaint</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>When a difficult situation arises, establish a personal rule: before analyzing, complaining, or problem-solving, you will first make one deliberate declaration of praise — spoken aloud or written.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The declaration does not need to reference the problem; it simply establishes God's character: "Lord, You are good and Your ways are right — even in this."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Do this for 14 days on a specific recurring irritant (a difficult relationship, a work frustration, a health issue) and note any shift in your interior posture over that period.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Use the seven praises of Israel as a structured daily praise vocabulary</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee identifies seven Hebrew words for praise (halal, yadah, towdah, shamar, zamar, barak, tehillah) — each emphasizing a different posture: declaration, thanksgiving, sacrifice, watching, melody, blessing, spontaneous song.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Rotate through one per day of the week, spending 3–5 minutes expressing that specific type of praise in your own words — this builds a richer and more varied praise vocabulary than repetitive generic praise.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The variety prevents praise from becoming routine; each form asks something different from the will and addresses a different dimension of God's character.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Apply the Jehoshaphat strategy to a current situation: send the singers out first</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Identify one active difficulty in your life — a conflict, a decision, a fear — that you have been approaching primarily through analysis or prayer-of-petition.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>For one week, begin every engagement with that situation with 5 minutes of praise specifically oriented toward God's sovereignty over it — before any analysis, strategy, or petition.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The intent is not to replace prayer but to reorder it: praise first establishes who is in authority; petition then flows from that position rather than from anxiety.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Replace complaint-language with praise-language in the first 60 seconds of each day</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The first words of the day — whether internal monologue or spoken — set the dominant orientation for hours of thought that follow. Most mornings begin with awareness of problems.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Concrete practice: before your feet hit the floor, say three specific things about God's character aloud. Not "thank you for this day" (gratitude, not praise) but "You are faithful / You are wise / You are in control of this day."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Track what this does to your complaint-frequency and anxiety-level over 3 weeks — Nee's thesis predicts measurable change in interior atmosphere.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Build a personal "midnight praise" — a practiced declaration for moments of acute distress</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Write and memorize a 2–3 sentence praise declaration for use specifically in moments of acute distress — when the problem feels overwhelming and praise feels most impossible.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>It should be specific to what you believe about God, not generic: "Lord, You are sovereign over this. You have never once failed to be good. I praise You now, here, in this." Pre-scripted praise removes the barrier of composition under pressure.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The Psalms' lament structure is the model: honest acknowledgment of darkness followed by deliberate pivot to God's character — not bypassing the pain, but refusing to let it have the final word.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- REFLECTION QUESTIONS -->
+<div class="section-label label-purple">Reflection Questions</div>
+<div class="reflection-list">
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">1</div>
+    <div class="reflect-question">Think of the last time you faced genuine difficulty. What was your first instinct — to analyze, to petition, to complain, or to praise? What does your default response reveal about where you actually locate authority when circumstances become hard? And what would it have taken — concretely — to make praise your first move instead?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">2</div>
+    <div class="reflect-question">Nee argues that praise offered before understanding is the most powerful kind. Is there a situation in your life right now that you are withholding praise from because it doesn't yet make sense? What would you need to believe about God's character — specifically — in order to begin praising in that area today, without waiting for clarity?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">3</div>
+    <div class="reflect-question">If praise genuinely "enthrones" God in a situation — opens the structural channel for His sovereignty to be expressed — then where in your life might chronic complaint or discouragement have functionally shut that channel? What might change practically if that channel were reopened?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">4</div>
+    <div class="reflect-question">Paul and Silas praised at midnight — in chains, in pain, without any indication it would accomplish anything visible. Is there a "midnight" season in your life — a place where you are chained to something that isn't changing — where this kind of praise feels most impossible? What would it mean to sing there anyway, not because you feel it, but because of who God is?</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>ReadLess · Book Intelligence</span>
+  <span>Praising · Watchman Nee · 1997</span>
+</div>
+
+</body>
+</html>
