@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two Principles of Living — Watchman Nee · ReadLess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fff;
+    --text: #0a0a0a;
+    --subtext: #444;
+    --label: #888;
+    --divider: #e5e5e5;
+    --tag-bg: #f0f0f0;
+    --tag-color: #444;
+    --thesis-border: #111;
+    --thesis-color: #111;
+    --pq-border: #0a0a0a;
+    --pq-text: #111;
+    --table-header-bg: #0a0a0a;
+    --table-header-text: #fff;
+    --table-row-alt: #fafafa;
+    --table-border: #e0e0e0;
+    --reflect-numeral: #e0e0e0;
+    --reflect-text: #0a0a0a;
+    --footer-border: #e5e5e5;
+    --footer-text: #aaa;
+    --topbar-border: #111;
+    --title-color: #0a0a0a;
+    --subtitle-color: #555;
+
+    --green: #0a8a5c;
+    --red: #c0392b;
+    --amber: #b07800;
+    --blue: #1a4db0;
+    --purple: #5b3fa0;
+    --grey: #888;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1.5px solid var(--topbar-border);
+    margin-bottom: 40px;
+  }
+  .topbar-left {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+
+  /* HEADER */
+  .book-header {
+    margin-bottom: 36px;
+  }
+  .book-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+    color: var(--title-color);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .book-subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--subtitle-color);
+    margin-bottom: 16px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    border-radius: 4px;
+    padding: 4px 11px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .date-added {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-top: 12px;
+  }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    border: none;
+    border-top: 0.5px solid var(--divider);
+    margin: 36px 0;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .label-green  { color: var(--green); }
+  .label-red    { color: var(--red); }
+  .label-amber  { color: var(--amber); }
+  .label-blue   { color: var(--blue); }
+  .label-purple { color: var(--purple); }
+  .label-grey   { color: var(--grey); }
+
+  /* THESIS */
+  .thesis {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--thesis-color);
+    border-left: 2px solid var(--thesis-border);
+    padding-left: 16px;
+  }
+
+  /* BULLET SYSTEM */
+  .insight-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .insight-item {}
+  .insight-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 7px;
+  }
+  .dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+  }
+  .dot-green  { background: var(--green); }
+  .dot-red    { background: var(--red); }
+  .dot-blue   { background: var(--blue); }
+
+  .sub-bullets {
+    list-style: none;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sub-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 12.5px;
+    color: var(--subtext);
+    line-height: 1.55;
+  }
+  .sub-dot {
+    flex-shrink: 0;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #bbb;
+    margin-top: 7px;
+  }
+
+  /* PULL QUOTE */
+  .pull-quote-wrap {
+    border-top: 1.5px solid var(--pq-border);
+    border-bottom: 1.5px solid var(--pq-border);
+    padding: 28px 0;
+    margin: 36px 0;
+  }
+  .pull-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--pq-text);
+  }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 0.5px solid var(--table-border);
+    font-size: 13px;
+  }
+  .compare-table thead tr {
+    background: var(--table-header-bg);
+    color: var(--table-header-text);
+  }
+  .compare-table thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .compare-table tbody tr:nth-child(even) {
+    background: var(--table-row-alt);
+  }
+  .compare-table tbody tr:nth-child(odd) {
+    background: var(--bg);
+  }
+  .compare-table tbody td {
+    padding: 10px 14px;
+    border-top: 0.5px solid var(--table-border);
+    color: var(--subtext);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .compare-table tbody td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    width: 28%;
+  }
+
+  /* REFLECTION QUESTIONS */
+  .reflection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .reflection-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .reflect-numeral {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--reflect-numeral);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .reflect-question {
+    font-size: 13px;
+    color: var(--reflect-text);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid var(--footer-border);
+    padding-top: 18px;
+    margin-top: 48px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--footer-text);
+  }
+
+  /* DARK MODE */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0a;
+      --text: #f0f0f0;
+      --subtext: #888;
+      --label: #555;
+      --divider: #1a1a1a;
+      --tag-bg: #1a1a1a;
+      --tag-color: #888;
+      --thesis-border: #555;
+      --thesis-color: #ccc;
+      --pq-border: #444;
+      --pq-text: #ccc;
+      --table-header-bg: #1a1a1a;
+      --table-header-text: #f0f0f0;
+      --table-row-alt: #111;
+      --table-border: #1a1a1a;
+      --reflect-numeral: #222;
+      --reflect-text: #888;
+      --footer-border: #1a1a1a;
+      --footer-text: #444;
+      --topbar-border: #333;
+      --title-color: #f0f0f0;
+      --subtitle-color: #888;
+    }
+    .compare-table tbody tr:nth-child(odd) { background: #0a0a0a; }
+    .sub-dot { background: #444; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">ReadLess · Book Intelligence</div>
+  <div class="topbar-right">
+    <span>Spiritual Formation</span>
+  </div>
+</div>
+
+<!-- BOOK HEADER -->
+<div class="book-header">
+  <div class="book-title">Two Principles of Living</div>
+  <div class="book-subtitle">Watchman Nee · 1996</div>
+  <div class="tags">
+    <span class="tag">Christian Life</span>
+    <span class="tag">Spiritual Formation</span>
+    <span class="tag">Theology</span>
+    <span class="tag">Sanctification</span>
+  </div>
+  <div class="date-added">Added March 2026</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- CORE THESIS -->
+<div class="section-label label-grey">Core Thesis</div>
+<p class="thesis">
+  All of human existence is governed by one of two operating principles: the Tree of the Knowledge of Good and Evil — the autonomous self judging and choosing what is right — or the Tree of Life, which is the uncalculated, moment-by-moment reception of God's own life as the source of all action. Watchman Nee argues that even moral and religious effort, when it flows from the self as its origin, is the same fallen principle as outright sin; the only escape is not better behavior, but a different root — Christ lived out through the yielded human spirit. Until a believer grasps this distinction at the level of lived experience rather than doctrine, genuine Christian fruitfulness remains impossible.
+</p>
+
+<hr class="section-divider">
+
+<!-- KEY INSIGHTS -->
+<div class="section-label label-green">Key Insights</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The two trees are not about morality — they are about source</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The Tree of the Knowledge of Good and Evil does not represent evil alone; it represents both good and evil governed by self-determination.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The religious person who strives for moral purity from their own will is eating from the same tree as the person who sins freely.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>What God condemns is not the fruit produced, but the independent faculty — the self-as-judge — that produces it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This reframes the spiritual problem: the issue is never first "what did I do?" but "from where did it come?"</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Adam's fall was a movement from dependence to independence, not merely disobedience</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Before the fall, humanity lived by receiving — life, wisdom, judgment all flowed from God through the human spirit.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The serpent's offer was not pleasure but autonomy: "you will be like God, knowing good and evil" — possessing within yourself the faculty of moral discrimination.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Sin is therefore the structural condition of self-as-source, prior to any particular sinful act.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Redemption must address this structural condition, not merely individual failures — which is why behavioral reformation is insufficient.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The soul (self-life) and the spirit (God-life) operate through different faculties and must be distinguished</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee draws sharply on the Pauline distinction between soul (psyche) and spirit (pneuma); soulish Christianity looks spiritual but is self-generated.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Fervent emotion, rigorous discipline, and rich religious experience can all be products of the soul — impressive yet still flowing from the wrong tree.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The human spirit, renewed by the Holy Spirit at new birth, is the only organ through which Tree of Life living occurs.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Learning to "walk by the spirit" requires developing sensitivity to which faculty is active in a given moment — a discipline of interior discernment, not external rule-keeping.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Christ's atoning work abolished the self-life's legal right to function as the believer's operating principle</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Co-crucifixion with Christ (Romans 6) is not a future aspiration but a completed positional fact: the old Adam was executed in Christ.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The practical problem is that believers continue living as if the old man is alive — faith must be applied to reckon the cross's accomplished work as present reality.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is why "reckoning" is an active daily stance, not a one-time crisis experience: each time the self-life asserts itself, the believer applies the cross to it by faith.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The resurrection life of Christ becomes experiential only as the old life is consistently held as dead — the cross is the door through which the Tree of Life is accessed.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Genuine fruit is always Christ's own life expressed, never the Christian's improved performance</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee argues from John 15: fruit is the vine's life expressing through the branch — the branch contributes nothing except availability and connection.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Love, patience, and holiness that originate in the self — however sincere — are imitations, not the real article; God is not satisfied with these counterfeits.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is radically liberating: the believer is not responsible for producing spiritual fruit, only for remaining in the Vine — abiding is the entire job description.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>It also explains why sustained spiritual effort that bypasses dependence eventually produces exhaustion, legalism, or proud comparison rather than Christlikeness.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<!-- PULL QUOTE -->
+<div class="pull-quote-wrap">
+  <div class="pull-quote">"God's intention has never been to improve the old creation but to replace it entirely with a new creation in Christ — and no amount of religious effort applied to the old can make it acceptable to Him."</div>
+</div>
+
+<!-- WATCH OUT FOR -->
+<div class="section-label label-red">Watch Out For</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Mistaking earnest moral effort for Spirit-led living</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>The most dangerous form of Tree-of-Knowledge living is disciplined Christian effort — it feels right, earns approval, and is nearly indistinguishable from the real thing.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The tell: does this action originate in response to God's prompting, or in my determination to be a certain kind of person?</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's framework can make sincere, disciplined Christians feel their whole spiritual life has been invalid — apply carefully and without condemnation.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Using Nee's teaching to justify passivity or spiritual laziness</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>"Abiding" is not passivity; it is active, attentive, continuous orientation toward Christ — like a branch that must remain, not a branch that merely exists.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The cross is applied by an act of faith-will — reckoning is not automatic, it requires deliberate appropriation.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Misreading this book as "just let go and let God" collapses a subtle and demanding theology into quietism.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Treating soul/spirit distinction as a map instead of a compass</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's trichotomous anthropology (body/soul/spirit) can become a system to master rather than a framework for ongoing discernment.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Over-applying the categories generates introspective paralysis: "Was that my soul or my spirit?" as constant, anxiety-producing self-interrogation.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The intent is practical sensitivity to God's leading, not a new form of self-examination that replaces dependence with analysis.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Assuming the two-tree framework makes observable behavior irrelevant</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Nee's emphasis on source does not mean outcomes don't matter — true Tree of Life living consistently produces observable fruit.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Claiming Spirit-source for actions that bear no Christlike fruit is self-deception, not deeper spirituality.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Jesus's own test remains operative: "You will know them by their fruits" — source and outcome are linked, not separable.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- CONCEPT COMPARISON -->
+<div class="section-label label-amber">Concept Comparison</div>
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Tree of Knowledge</th>
+      <th>Tree of Life</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Operating source</td>
+      <td>The autonomous self — whether sinning or striving morally</td>
+      <td>Christ's resurrection life received through the human spirit</td>
+    </tr>
+    <tr>
+      <td>Mode of action</td>
+      <td>Self-initiation: I decide, then act</td>
+      <td>Spirit-response: I receive, then move in accord</td>
+    </tr>
+    <tr>
+      <td>How it feels</td>
+      <td>Earnest, responsible, even sacrificial — internally driven</td>
+      <td>Quieter, less heroic — often comes as a gentle inner compulsion</td>
+    </tr>
+    <tr>
+      <td>Long-term trajectory</td>
+      <td>Exhaustion, pride, guilt cycles, or outright moral collapse</td>
+      <td>Increasing fruitfulness, restfulness, and diminishment of self-consciousness</td>
+    </tr>
+    <tr>
+      <td>Relationship to the cross</td>
+      <td>Bypasses or minimizes the co-crucifixion of the old man</td>
+      <td>Continuously applies and appropriates the cross's accomplished work</td>
+    </tr>
+    <tr>
+      <td>What God accepts</td>
+      <td>Not accepted regardless of its moral quality</td>
+      <td>The only thing God recognizes as spiritually real and fruitful</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- APPLY THIS -->
+<div class="section-label label-blue">Apply This</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Introduce a source-check before significant decisions and actions</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Before acting on an impulse — especially a morally good one — pause and ask: "Is this arising from my sense of what I should be, or is it a response to something God is actually moving me toward?"</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The question is not "Is this action good?" but "Is this God-initiated or self-initiated?"</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Start small: apply this check to one category of life (work ethic, relational effort, spiritual disciplines) for 30 days before expanding.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Practice daily reckoning as an explicit, verbalized act of faith</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Each morning, explicitly reckon the self-life as having died with Christ and the resurrection life as your operative reality for the day — say it aloud or write it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>When the self-life asserts itself (irritation, pride, anxiety, self-will), return to the same reckoning in the moment rather than resolving to "do better."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Reckoning is a present-tense faith stance, not a feeling — apply it regardless of emotional confirmation.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Audit your spiritual disciplines for their operating principle, not just their presence</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Bible reading, prayer, fasting, and service can all be practiced from the Tree of Knowledge — to become, to achieve, to earn standing.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Ask of each discipline: "Am I doing this to become something, or to receive Someone?" Adjust your interior posture accordingly.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>A discipline that produces pride or comparison rather than deeper dependence is likely operating from the wrong source — don't abandon it, but reorient its purpose.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Replace outcome-goals in spiritual growth with availability-goals</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Instead of "I will become more patient," orient toward "I will remain connected and available to Christ in moments that provoke impatience."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Write availability-goals rather than character-goals in your journal or prayer life — this concretely shifts the locus of responsibility from self-production to Spirit-reception.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Measure success by attentiveness, not by improved behavior — though improved behavior will follow.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Use fruit as diagnostic feedback, not as a performance metric</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>When spiritual effort produces exhaustion, resentment, or pride, treat these as indicators that the Tree of Knowledge is operating — not as failures requiring more effort.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>When actions arise from a place of unexpected peace and produce fruit that surprises you, note what was different in your interior posture — replicate the orientation, not the behavior.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Keep a brief log for 2–4 weeks: note high-fruit moments and what your interior state was beforehand. Let the data reveal your own patterns.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- REFLECTION QUESTIONS -->
+<div class="section-label label-purple">Reflection Questions</div>
+<div class="reflection-list">
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">1</div>
+    <div class="reflect-question">Think of the spiritual or moral effort you are most proud of in the past year. If you trace it back honestly — was it initiated by a prompting you received, or by your own sense of who you needed to become? What does the answer reveal about which tree was operating?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">2</div>
+    <div class="reflect-question">Where in your life do you feel the most persistent spiritual exhaustion or stagnation? Is it possible that the exhaustion is itself the signal — that you have been trying to generate from the self what can only flow from abiding? What would it look like to stop the effort and begin to receive instead?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">3</div>
+    <div class="reflect-question">Nee argues that even good deeds done from self-initiative are not accepted by God as spiritual fruit. Does this feel liberating or destabilizing to you — and what does your reaction reveal about how much of your identity is built on your moral and religious performance?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">4</div>
+    <div class="reflect-question">If the only thing God asks of the branch is to remain in the Vine, what specific things are you currently doing to remain — and what practices or mental habits are actively pulling you away from that connection, even in the name of spiritual productivity?</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>ReadLess · Book Intelligence</span>
+  <span>Two Principles of Living · Watchman Nee · 1996</span>
+</div>
+
+</body>
+</html>

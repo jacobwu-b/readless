@@ -31,5 +31,16 @@
     "cover": "https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg",
     "date_added": "2026-03-15",
     "read_time": "12 min"
+  },
+  {
+    "slug": "two-principles-of-living",
+    "title": "Two Principles of Living",
+    "author": "Watchman Nee",
+    "year": 1996,
+    "tags": ["Christian Life", "Spiritual Formation", "Theology", "Sanctification"],
+    "category": "Spiritual Formation",
+    "cover": "https://covers.openlibrary.org/b/isbn/9781575938615-L.jpg",
+    "date_added": "2026-03-01",
+    "read_time": "25 min"
   }
 ]
