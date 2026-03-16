@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sapiens · ReadLess</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; -webkit-font-smoothing: antialiased; }
+    header { border-bottom: 1.5px solid #111; padding: 0 48px; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .site-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #0a0a0a; text-decoration: none; letter-spacing: -0.02em; }
+    .back { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #999; text-decoration: none; }
+    .back:hover { color: #555; }
+    main { max-width: 760px; margin: 0 auto; padding: 56px 48px 96px; }
+    .bs-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1.5px solid #111; margin-bottom: 22px; }
+    .bs-site { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #888; }
+    .bs-meta { font-size: 11px; color: #888; }
+    .bs-title { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 700; color: #0a0a0a; margin: 0 0 6px; line-height: 1.12; letter-spacing: -0.02em; }
+    .bs-sub { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #555; margin: 0 0 18px; }
+    .bs-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; }
+    .bs-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; background: #f0f0f0; color: #444; padding: 4px 11px; border-radius: 4px; }
+    .bs-thesis-block { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 0.5px solid #e5e5e5; }
+    .bs-section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+    .bs-thesis { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 16px; color: #1a1a1a; line-height: 1.75; margin: 0; border-left: 2px solid #111; padding-left: 16px; }
+    .bs-section { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 0.5px solid #e5e5e5; }
+    .bs-list { list-style: none; margin: 0; padding: 0; }
+    .bs-list > li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #111; margin-bottom: 16px; }
+    .bs-list > li:last-child { margin-bottom: 0; }
+    .bs-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .bs-item { flex: 1; }
+    .bs-item-title { font-weight: 500; font-size: 13px; color: #0a0a0a; margin-bottom: 5px; line-height: 1.4; }
+    .bs-sub-list { list-style: none; margin: 0; padding: 0; }
+    .bs-sub-list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: #444; line-height: 1.55; margin-bottom: 4px; }
+    .bs-sub-list li:last-child { margin-bottom: 0; }
+    .bs-subdot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; margin-top: 7px; flex-shrink: 0; }
+    .bs-quote { border-top: 1.5px solid #0a0a0a; border-bottom: 1.5px solid #0a0a0a; padding: 18px 0; margin: 0 0 24px; }
+    .bs-quote p { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #1a1a1a; margin: 0; line-height: 1.6; }
+    .bs-table-wrap { border-radius: 8px; overflow: hidden; border: 0.5px solid #e0e0e0; }
+    .bs-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .bs-table thead tr { background: #0a0a0a; }
+    .bs-table thead th { padding: 9px 13px; color: #fff; font-weight: 500; font-size: 11px; letter-spacing: 0.05em; text-align: left; }
+    .bs-table tbody tr { border-bottom: 0.5px solid #f0f0f0; }
+    .bs-table tbody tr:last-child { border-bottom: none; }
+    .bs-table tbody tr:nth-child(even) { background: #fafafa; }
+    .bs-table td { padding: 9px 13px; color: #333; vertical-align: top; line-height: 1.5; }
+    .bs-table td:first-child { font-weight: 500; color: #111; }
+    .bs-qs { display: flex; flex-direction: column; gap: 13px; }
+    .bs-q { display: flex; gap: 12px; align-items: flex-start; }
+    .bs-qnum { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: #e0e0e0; line-height: 1; flex-shrink: 0; width: 22px; }
+    .bs-qtext { font-size: 13px; color: #333; line-height: 1.65; padding-top: 3px; }
+    .bs-footer { border-top: 0.5px solid #e5e5e5; padding-top: 14px; margin-top: 8px; display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0a0a0a; color: #f0f0f0; }
+      header { border-color: #333; } .site-name { color: #f0f0f0; }
+      .bs-bar { border-color: #333; } .bs-title { color: #f0f0f0; } .bs-sub { color: #888; }
+      .bs-tag { background: #1a1a1a; color: #888; }
+      .bs-thesis-block { border-color: #222; } .bs-thesis { color: #ccc; border-color: #555; }
+      .bs-section { border-color: #1a1a1a; }
+      .bs-list > li { color: #e0e0e0; } .bs-item-title { color: #f0f0f0; }
+      .bs-sub-list li { color: #888; } .bs-subdot { background: #333; }
+      .bs-quote { border-color: #444; } .bs-quote p { color: #ccc; }
+      .bs-table-wrap { border-color: #222; } .bs-table thead tr { background: #1a1a1a; }
+      .bs-table tbody tr:nth-child(even) { background: #111; } .bs-table tbody tr { border-color: #1a1a1a; }
+      .bs-table td { color: #888; } .bs-table td:first-child { color: #ddd; }
+      .bs-qnum { color: #222; } .bs-qtext { color: #888; }
+      .bs-footer { border-color: #1a1a1a; color: #444; }
+    }
+    @media (max-width: 640px) { header, main { padding-left: 24px; padding-right: 24px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="../../" class="site-name">ReadLess</a>
+      <a href="../../" class="back">← All books</a>
+    </div>
+  </header>
+  <main>
+    <div class="bs-bar">
+      <div class="bs-site">ReadLess · Book Intelligence</div>
+      <div class="bs-meta">History · 12 min read</div>
+    </div>
+    <h1 class="bs-title">Sapiens</h1>
+    <div class="bs-sub">Yuval Noah Harari, 2011</div>
+    <div class="bs-tags">
+      <span class="bs-tag">History</span>
+      <span class="bs-tag">Anthropology</span>
+      <span class="bs-tag">Civilization</span>
+      <span class="bs-tag">Human Nature</span>
+    </div>
+
+    <div class="bs-thesis-block">
+      <div class="bs-section-label" style="color:#888;">Core Thesis</div>
+      <p class="bs-thesis">Homo sapiens dominates Earth not because of superior strength or intelligence, but because of a unique cognitive ability: we can believe in and cooperate around shared fictions — money, nations, religions, corporations. These imagined orders are the real infrastructure of civilization, and understanding them exposes both the contingency of our current world and the fragility of everything we take as given.</p>
+    </div>
+
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#0a8a5c;">Key Insights</div>
+      <ul class="bs-list">
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">The Cognitive Revolution: fiction is the operating system of civilization</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>~70,000 years ago: Sapiens developed the ability to believe in things that don't physically exist</div></li>
+              <li><div class="bs-subdot"></div><div>This enables unlimited cooperation — chimpanzees can coordinate in groups of ~50; humans coordinate in millions</div></li>
+              <li><div class="bs-subdot"></div><div>Money, nations, human rights, corporations: none exist in nature — all are collective fictions we sustain by mutual belief</div></li>
+              <li><div class="bs-subdot"></div><div>A dollar bill is worthless paper; its value exists only because enough people agree it has value</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">The Agricultural Revolution was history's greatest fraud</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Farming produced more calories but worse lives: harder work, worse diet, more disease, more inequality</div></li>
+              <li><div class="bs-subdot"></div><div>Hunter-gatherers worked ~4 hrs/day and ate a diverse diet; farmers worked dawn to dusk on wheat and rice</div></li>
+              <li><div class="bs-subdot"></div><div>The species that "won" (wheat, rice, cattle) enslaved humans as much as the reverse</div></li>
+              <li><div class="bs-subdot"></div><div>Progress for the collective does not equal improvement for the individual</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Imagined orders are self-reinforcing and nearly impossible to escape</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>The inter-subjective: things that exist because enough people believe in them — distinct from objective facts and subjective feelings</div></li>
+              <li><div class="bs-subdot"></div><div>Humans raised inside an imagined order cannot see the prison — it feels like reality</div></li>
+              <li><div class="bs-subdot"></div><div>You can't opt out of money, law, or nations — even rejecting them requires using their infrastructure</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">The unification of humankind: money, empire, and religion as globalizing forces</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>History moves toward integration — fewer, larger units of cooperation over time</div></li>
+              <li><div class="bs-subdot"></div><div>Money: the most universal and efficient system of mutual trust ever devised</div></li>
+              <li><div class="bs-subdot"></div><div>Empires: spread culture, law, and infrastructure alongside violence and exploitation</div></li>
+              <li><div class="bs-subdot"></div><div>Today's "global village" is the culmination of 70,000 years of increasing integration</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">The Scientific Revolution: admitting ignorance as the engine of progress</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Pre-modern: knowledge meant knowing what was already written in sacred texts</div></li>
+              <li><div class="bs-subdot"></div><div>Modern: progress begins with "we don't know" — and a method for finding out</div></li>
+              <li><div class="bs-subdot"></div><div>Science + capitalism + empire formed a feedback loop that reshaped the planet in 500 years</div></li>
+              <li><div class="bs-subdot"></div><div>Capitalism uniquely funds future growth on credit — a belief in a better tomorrow that didn't yet exist</div></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bs-quote">
+      <p>"History is something that very few people have been doing while everyone else was ploughing fields and carrying water."</p>
+    </div>
+
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#c0392b;">Watch Out For</div>
+      <ul class="bs-list">
+        <li>
+          <div class="bs-dot" style="background:#c0392b;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Conflating collective success with individual wellbeing</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>GDP, population size, military power — none measure whether lives are actually better</div></li>
+              <li><div class="bs-subdot"></div><div>Harari argues we have no good evidence modern humans are happier than their ancestors</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#c0392b;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Treating current imagined orders as natural or inevitable</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>The free market, human rights, the nation-state — all are recent inventions, not eternal truths</div></li>
+              <li><div class="bs-subdot"></div><div>What feels permanent is usually just well-established collective fiction</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#c0392b;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Assuming Sapiens is a benign force</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Every continent humans reached experienced mass extinctions within millennia of arrival</div></li>
+              <li><div class="bs-subdot"></div><div>Sapiens is "history's most deadly predator" — the ecological record is unambiguous</div></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#b07800;">Three Revolutions Compared</div>
+      <div class="bs-table-wrap">
+        <table class="bs-table">
+          <thead><tr><th>Revolution</th><th>When</th><th>What Changed</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Cognitive</td><td>~70,000 BCE</td><td>Shared fiction; mass cooperation</td><td>Extinction of other human species</td></tr>
+            <tr><td>Agricultural</td><td>~10,000 BCE</td><td>Food surplus; civilization</td><td>Harder lives; disease; hierarchy</td></tr>
+            <tr><td>Scientific</td><td>~1500 CE</td><td>Compounding knowledge; global power</td><td>Ecological destruction; inequality</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#1a4db0;">Apply This</div>
+      <ul class="bs-list">
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Identify the imagined orders running your life</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Career ladders, social status, money, national identity — which are you treating as objective reality?</div></li>
+              <li><div class="bs-subdot"></div><div>They may be worth participating in — but worth doing so consciously</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Question progress narratives</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>When something is called "progress," ask: progress for whom? By what measure?</div></li>
+              <li><div class="bs-subdot"></div><div>Collective metrics (GDP, growth) routinely obscure individual experience</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Use the species-level lens for long-range thinking</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Harari's 70,000-year frame makes short-term anxieties look different</div></li>
+              <li><div class="bs-subdot"></div><div>Useful for evaluating technology, institutions, and civilizational choices</div></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bs-section" style="border-bottom:none;padding-bottom:0;">
+      <div class="bs-section-label" style="color:#5b3fa0;">Reflection Questions</div>
+      <div class="bs-qs">
+        <div class="bs-q"><div class="bs-qnum">1</div><div class="bs-qtext">Which imagined orders most shape your daily life — and which do you mistake for objective reality rather than collective fiction?</div></div>
+        <div class="bs-q"><div class="bs-qnum">2</div><div class="bs-qtext">Are you happier than a hunter-gatherer? By what measure? What does your answer reveal about what you actually value?</div></div>
+        <div class="bs-q"><div class="bs-qnum">3</div><div class="bs-qtext">Harari argues the Agricultural Revolution was a trap: more productivity, worse lives. Where in your own life might you have made a similar trade without realizing it?</div></div>
+        <div class="bs-q"><div class="bs-qnum">4</div><div class="bs-qtext">If the institutions you operate within — your employer, your country, your religion — are imagined orders, what does that change about how you relate to them?</div></div>
+      </div>
+    </div>
+
+    <div class="bs-footer">
+      <span>Book Intelligence</span>
+      <span>Added March 2026</span>
+    </div>
+  </main>
+</body>
+</html>

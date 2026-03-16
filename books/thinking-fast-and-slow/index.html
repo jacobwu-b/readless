@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thinking, Fast and Slow · ReadLess</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      border-bottom: 1.5px solid #111;
+      padding: 0 48px;
+    }
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .site-name {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0a0a0a;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .back {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back:hover { color: #555; }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 48px 96px;
+    }
+
+    /* ── DOC ── */
+    .bs-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1.5px solid #111; margin-bottom: 22px; }
+    .bs-site { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #888; }
+    .bs-meta { font-size: 11px; color: #888; }
+    .bs-title { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 700; color: #0a0a0a; margin: 0 0 6px; line-height: 1.12; letter-spacing: -0.02em; }
+    .bs-sub { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #555; margin: 0 0 18px; }
+    .bs-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; }
+    .bs-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; background: #f0f0f0; color: #444; padding: 4px 11px; border-radius: 4px; }
+
+    .bs-thesis-block { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 0.5px solid #e5e5e5; }
+    .bs-section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+    .bs-thesis { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 16px; color: #1a1a1a; line-height: 1.75; margin: 0; border-left: 2px solid #111; padding-left: 16px; }
+
+    .bs-section { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 0.5px solid #e5e5e5; }
+
+    .bs-list { list-style: none; margin: 0; padding: 0; }
+    .bs-list > li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #111; margin-bottom: 16px; }
+    .bs-list > li:last-child { margin-bottom: 0; }
+    .bs-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .bs-item { flex: 1; }
+    .bs-item-title { font-weight: 500; font-size: 13px; color: #0a0a0a; margin-bottom: 5px; line-height: 1.4; }
+    .bs-sub-list { list-style: none; margin: 0; padding: 0; }
+    .bs-sub-list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: #444; line-height: 1.55; margin-bottom: 4px; }
+    .bs-sub-list li:last-child { margin-bottom: 0; }
+    .bs-subdot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; margin-top: 7px; flex-shrink: 0; }
+
+    .bs-quote { border-top: 1.5px solid #0a0a0a; border-bottom: 1.5px solid #0a0a0a; padding: 18px 0; margin: 0 0 24px; }
+    .bs-quote p { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #1a1a1a; margin: 0; line-height: 1.6; }
+
+    .bs-table-wrap { border-radius: 8px; overflow: hidden; border: 0.5px solid #e0e0e0; }
+    .bs-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .bs-table thead tr { background: #0a0a0a; }
+    .bs-table thead th { padding: 9px 13px; color: #fff; font-weight: 500; font-size: 11px; letter-spacing: 0.05em; text-align: left; }
+    .bs-table tbody tr { border-bottom: 0.5px solid #f0f0f0; }
+    .bs-table tbody tr:last-child { border-bottom: none; }
+    .bs-table tbody tr:nth-child(even) { background: #fafafa; }
+    .bs-table td { padding: 9px 13px; color: #333; vertical-align: top; line-height: 1.5; }
+    .bs-table td:first-child { font-weight: 500; color: #111; }
+
+    .bs-qs { display: flex; flex-direction: column; gap: 13px; }
+    .bs-q { display: flex; gap: 12px; align-items: flex-start; }
+    .bs-qnum { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: #e0e0e0; line-height: 1; flex-shrink: 0; width: 22px; }
+    .bs-qtext { font-size: 13px; color: #333; line-height: 1.65; padding-top: 3px; }
+
+    .bs-footer { border-top: 0.5px solid #e5e5e5; padding-top: 14px; margin-top: 8px; display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #0a0a0a; color: #f0f0f0; }
+      header { border-color: #333; }
+      .site-name { color: #f0f0f0; }
+      .bs-bar { border-color: #333; }
+      .bs-title { color: #f0f0f0; } .bs-sub { color: #888; }
+      .bs-tag { background: #1a1a1a; color: #888; }
+      .bs-thesis-block { border-color: #222; } .bs-thesis { color: #ccc; border-color: #555; }
+      .bs-section { border-color: #1a1a1a; }
+      .bs-list > li { color: #e0e0e0; } .bs-item-title { color: #f0f0f0; }
+      .bs-sub-list li { color: #888; } .bs-subdot { background: #333; }
+      .bs-quote { border-color: #444; } .bs-quote p { color: #ccc; }
+      .bs-table-wrap { border-color: #222; }
+      .bs-table thead tr { background: #1a1a1a; }
+      .bs-table tbody tr:nth-child(even) { background: #111; }
+      .bs-table tbody tr { border-color: #1a1a1a; }
+      .bs-table td { color: #888; } .bs-table td:first-child { color: #ddd; }
+      .bs-qnum { color: #222; } .bs-qtext { color: #888; }
+      .bs-footer { border-color: #1a1a1a; color: #444; }
+    }
+
+    @media (max-width: 640px) {
+      header, main { padding-left: 24px; padding-right: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="../../" class="site-name">ReadLess</a>
+      <a href="../../" class="back">← All books</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="bs-bar">
+      <div class="bs-site">ReadLess · Book Intelligence</div>
+      <div class="bs-meta">Psychology · 10 min read</div>
+    </div>
+
+    <h1 class="bs-title">Thinking, Fast and Slow</h1>
+    <div class="bs-sub">Daniel Kahneman, 2011</div>
+    <div class="bs-tags">
+      <span class="bs-tag">Decision-making</span>
+      <span class="bs-tag">Cognitive bias</span>
+      <span class="bs-tag">Behavioral economics</span>
+      <span class="bs-tag">Rationality</span>
+    </div>
+
+    <!-- THESIS -->
+    <div class="bs-thesis-block">
+      <div class="bs-section-label" style="color:#888;">Core Thesis</div>
+      <p class="bs-thesis">Human thought runs on two systems. System 1 is automatic, fast, and emotional — it makes most of your decisions without telling you. System 2 is deliberate and logical — but lazy, and mostly narrates justifications for what System 1 already decided. Most human error is not stupidity; it is the predictable misfiring of a brain built for a different world.</p>
+    </div>
+
+    <!-- KEY INSIGHTS -->
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#0a8a5c;">Key Insights</div>
+      <ul class="bs-list">
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Loss aversion is ~2× more powerful than equivalent gain</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Losing $100 feels roughly twice as painful as gaining $100 feels good</div></li>
+              <li><div class="bs-subdot"></div><div>Drives: holding losing investments too long, avoiding career risk, staying in bad situations</div></li>
+              <li><div class="bs-subdot"></div><div>We evaluate outcomes relative to a shifting reference point — not in absolute terms</div></li>
+              <li><div class="bs-subdot"></div><div>Reframing a loss as a "foregone gain" measurably changes willingness to act</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Cognitive ease is the brain's silent "true" signal — and it lies</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Fluent, familiar, repeated information is flagged as credible regardless of accuracy</div></li>
+              <li><div class="bs-subdot"></div><div>Bold fonts, clear printing, and rhyming statements all increase perceived truth</div></li>
+              <li><div class="bs-subdot"></div><div>The things that feel obviously right deserve the most scrutiny, not the least</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Anchoring distorts all estimation — including by experts</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>The first number encountered pulls all subsequent estimates toward it, even when arbitrary</div></li>
+              <li><div class="bs-subdot"></div><div>In one study, judges given a randomly rolled number handed out measurably different sentences</div></li>
+              <li><div class="bs-subdot"></div><div>Awareness barely helps — the only defense is forming your own estimate before seeing theirs</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">The planning fallacy is immune to experience</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Experts consistently underestimate time, cost, and risk — even with long track records of being wrong</div></li>
+              <li><div class="bs-subdot"></div><div>Inside view: focus on this plan's specifics → optimistic by default</div></li>
+              <li><div class="bs-subdot"></div><div>Outside view: what happened to comparable efforts? → almost always more accurate</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#0a8a5c;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">We have two selves with completely different agendas</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Experiencing self: lives moment to moment</div></li>
+              <li><div class="bs-subdot"></div><div>Remembering self: edits the past — weighted heavily by peak and ending, not duration</div></li>
+              <li><div class="bs-subdot"></div><div>The remembering self makes your decisions; the experiencing self lives with them</div></li>
+              <li><div class="bs-subdot"></div><div>Implications for vacations, careers, relationships — they're often optimized for the wrong self</div></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- PULL QUOTE -->
+    <div class="bs-quote">
+      <p>"Nothing in life is as important as you think it is while you are thinking about it."</p>
+    </div>
+
+    <!-- WATCH OUT FOR -->
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#c0392b;">Watch Out For</div>
+      <ul class="bs-list">
+        <li>
+          <div class="bs-dot" style="background:#c0392b;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Substitution</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>When a hard question is asked, System 1 silently answers an easier one instead</div></li>
+              <li><div class="bs-subdot"></div><div>System 2 rarely notices the swap — and endorses the answer anyway</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#c0392b;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">The halo effect</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>One positive trait (confidence, attractiveness) contaminates all subsequent judgments</div></li>
+              <li><div class="bs-subdot"></div><div>First impressions are far stickier and more consequential than they should be</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#c0392b;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Narrative fallacy</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>We compulsively construct causal stories from random events</div></li>
+              <li><div class="bs-subdot"></div><div>Then mistake the story for an explanation — and feel certain about it</div></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#b07800;">System 1 vs. System 2</div>
+      <div class="bs-table-wrap">
+        <table class="bs-table">
+          <thead><tr><th>Dimension</th><th>System 1 — Fast</th><th>System 2 — Slow</th></tr></thead>
+          <tbody>
+            <tr><td>Speed</td><td>Instant, automatic</td><td>Deliberate, effortful</td></tr>
+            <tr><td>Energy</td><td>Near zero — always on</td><td>Depletes with use</td></tr>
+            <tr><td>Strength</td><td>Pattern recognition, heuristics</td><td>Complex reasoning, statistics</td></tr>
+            <tr><td>Failure mode</td><td>Bias, anchoring, overconfidence</td><td>Lazy deference to System 1</td></tr>
+            <tr><td>Trust when</td><td>Genuine expertise, familiar domains</td><td>Novel, high-stakes, unfamiliar</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- APPLY THIS -->
+    <div class="bs-section">
+      <div class="bs-section-label" style="color:#1a4db0;">Apply This</div>
+      <ul class="bs-list">
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Run a pre-mortem before any major commitment</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Imagine it's one year later and the project has failed — write down exactly why</div></li>
+              <li><div class="bs-subdot"></div><div>Forces System 2 engagement before the decision is locked in</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Anchor first in any negotiation</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Whoever names a number first controls the frame — use this deliberately</div></li>
+              <li><div class="bs-subdot"></div><div>When receiving an anchor: form your own estimate before engaging with theirs</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Seek the outside view on your plans</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Find the reference class — what happened to comparable efforts historically?</div></li>
+              <li><div class="bs-subdot"></div><div>That base rate beats your optimistic inside view almost every time</div></li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="bs-dot" style="background:#1a4db0;"></div>
+          <div class="bs-item">
+            <div class="bs-item-title">Slow down when a decision feels obviously right</div>
+            <ul class="bs-sub-list">
+              <li><div class="bs-subdot"></div><div>Cognitive ease is a yellow flag — comfort means System 1 is running unopposed</div></li>
+              <li><div class="bs-subdot"></div><div>High-stakes + frictionless feeling = time to pause and engage System 2</div></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- REFLECTION -->
+    <div class="bs-section" style="border-bottom:none;padding-bottom:0;">
+      <div class="bs-section-label" style="color:#5b3fa0;">Reflection Questions</div>
+      <div class="bs-qs">
+        <div class="bs-q"><div class="bs-qnum">1</div><div class="bs-qtext">Think of a significant decision you made recently that felt obviously right. Which system was actually driving it — and how would you ever know for certain?</div></div>
+        <div class="bs-q"><div class="bs-qnum">2</div><div class="bs-qtext">Where in your life does loss aversion keep you from a bet with clearly positive expected value? What changes if you reframe it purely as a gain?</div></div>
+        <div class="bs-q"><div class="bs-qnum">3</div><div class="bs-qtext">Your remembering self makes your decisions; your experiencing self lives with them. Are they currently optimizing for the same thing?</div></div>
+        <div class="bs-q"><div class="bs-qnum">4</div><div class="bs-qtext">When you plan a project, do you consult the base rate — what happened to comparable efforts? If not, what's actually driving your confidence?</div></div>
+      </div>
+    </div>
+
+    <div class="bs-footer">
+      <span>Book Intelligence</span>
+      <span>Added March 2026</span>
+    </div>
+  </main>
+
+</body>
+</html>

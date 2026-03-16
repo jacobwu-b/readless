@@ -1,0 +1,35 @@
+[
+  {
+    "slug": "thinking-fast-and-slow",
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "year": 2011,
+    "tags": ["decision-making", "cognitive bias", "behavioral economics", "rationality"],
+    "category": "Psychology",
+    "cover": "https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg",
+    "date_added": "2026-03-01",
+    "read_time": "10 min"
+  },
+  {
+    "slug": "atomic-habits",
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "year": 2018,
+    "tags": ["habits", "productivity", "self-improvement", "behavior change"],
+    "category": "Self-Development",
+    "cover": "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
+    "date_added": "2026-03-08",
+    "read_time": "9 min"
+  },
+  {
+    "slug": "sapiens",
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "year": 2011,
+    "tags": ["history", "anthropology", "civilization", "human nature"],
+    "category": "History",
+    "cover": "https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg",
+    "date_added": "2026-03-15",
+    "read_time": "12 min"
+  }
+]

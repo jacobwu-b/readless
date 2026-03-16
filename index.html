@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReadLess · Book Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f7f5;
+      --text: #0a0a0a;
+      --text2: #555;
+      --text3: #999;
+      --border: #e5e5e5;
+      --border-strong: #111;
+      --tag-bg: #f0f0f0;
+      --tag-color: #444;
+      --card-hover: #fafaf8;
+      --accent: #1a4db0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0a0a0a;
+        --bg2: #111;
+        --text: #f0f0f0;
+        --text2: #888;
+        --text3: #555;
+        --border: #1e1e1e;
+        --border-strong: #444;
+        --tag-bg: #1a1a1a;
+        --tag-color: #888;
+        --card-hover: #141414;
+        --accent: #60a5fa;
+      }
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 1.5px solid var(--border-strong);
+      padding: 0 48px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .site-name {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .site-tagline {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 48px 96px;
+    }
+
+    /* ── HERO TEXT ── */
+    .hero {
+      margin-bottom: 48px;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 18px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+      max-width: 360px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      pointer-events: none;
+    }
+
+    input[type="search"] {
+      width: 100%;
+      height: 38px;
+      padding: 0 14px 0 36px;
+      border: 0.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+
+    input[type="search"]:focus { border-color: var(--text3); }
+    input[type="search"]::placeholder { color: var(--text3); }
+
+    .filter-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 4px;
+      border: 0.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text3);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { border-color: var(--text3); color: var(--text2); }
+
+    .filter-btn.active {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    /* ── COUNT ── */
+    .result-count {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+    }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      background: var(--card-hover);
+      border-color: #ccc;
+      transform: translateY(-2px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .card:hover { border-color: #333; }
+    }
+
+    .card-cover {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      object-fit: cover;
+      object-position: center top;
+      background: var(--bg2);
+      display: block;
+      max-height: 220px;
+      object-fit: cover;
+    }
+
+    .card-cover-placeholder {
+      width: 100%;
+      height: 180px;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-cover-placeholder span {
+      font-family: 'Fraunces', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--border);
+    }
+
+    .card-body {
+      padding: 16px 18px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-category {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    .card-title {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .card-author {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 13px;
+      color: var(--text2);
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      background: var(--tag-bg);
+      color: var(--tag-color);
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: auto;
+      padding-top: 8px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 64px 0;
+    }
+
+    .empty p {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 18px;
+      color: var(--text3);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 0.5px solid var(--border);
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    @media (max-width: 640px) {
+      header, footer { padding: 0 24px; }
+      main { padding: 36px 24px 72px; }
+      .hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="/" class="site-name">ReadLess</a>
+      <span class="site-tagline">Book Intelligence</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Books worth reading.<br>Without reading them.</h1>
+      <p>Distilled insights, actionable takeaways, and the ideas that matter.</p>
+    </div>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="search" id="search" placeholder="Search books, authors, tags…">
+      </div>
+      <div class="filter-tags" id="filter-tags">
+        <button class="filter-btn active" data-filter="all">All</button>
+      </div>
+    </div>
+
+    <div class="result-count" id="result-count"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    <span>ReadLess · Book Intelligence</span>
+    <span id="footer-count"></span>
+  </footer>
+
+  <script>
+    let allBooks = [];
+    let activeFilter = 'all';
+
+    async function init() {
+      const res = await fetch('./books-index.json');
+      allBooks = await res.json();
+
+      // Build category filters
+      const categories = [...new Set(allBooks.map(b => b.category))].sort();
+      const filterWrap = document.getElementById('filter-tags');
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.dataset.filter = cat;
+        btn.textContent = cat;
+        btn.addEventListener('click', () => setFilter(cat, btn));
+        filterWrap.appendChild(btn);
+      });
+
+      document.getElementById('search').addEventListener('input', render);
+      document.querySelector('[data-filter="all"]').addEventListener('click', (e) => setFilter('all', e.target));
+
+      document.getElementById('footer-count').textContent = `${allBooks.length} book${allBooks.length !== 1 ? 's' : ''}`;
+      render();
+    }
+
+    function setFilter(filter, btn) {
+      activeFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+
+    function render() {
+      const query = document.getElementById('search').value.toLowerCase().trim();
+      const grid = document.getElementById('grid');
+
+      let books = allBooks;
+
+      if (activeFilter !== 'all') {
+        books = books.filter(b => b.category === activeFilter);
+      }
+
+      if (query) {
+        books = books.filter(b =>
+          b.title.toLowerCase().includes(query) ||
+          b.author.toLowerCase().includes(query) ||
+          b.tags.some(t => t.toLowerCase().includes(query)) ||
+          b.category.toLowerCase().includes(query)
+        );
+      }
+
+      const count = document.getElementById('result-count');
+      count.textContent = query || activeFilter !== 'all'
+        ? `${books.length} result${books.length !== 1 ? 's' : ''}`
+        : '';
+
+      grid.innerHTML = '';
+
+      if (books.length === 0) {
+        grid.innerHTML = `<div class="empty"><p>No books found. Try a different search.</p></div>`;
+        return;
+      }
+
+      books.forEach(book => {
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.href = `./books/${book.slug}/`;
+
+        const coverHTML = book.cover
+          ? `<img class="card-cover" src="${book.cover}" alt="${book.title}" loading="lazy" onerror="this.outerHTML='<div class=\'card-cover-placeholder\'><span>${book.title[0]}</span></div>'">`
+          : `<div class="card-cover-placeholder"><span>${book.title[0]}</span></div>`;
+
+        const tagsHTML = book.tags.slice(0, 3).map(t =>
+          `<span class="card-tag">${t}</span>`
+        ).join('');
+
+        card.innerHTML = `
+          ${coverHTML}
+          <div class="card-body">
+            <div class="card-category">${book.category}</div>
+            <div class="card-title">${book.title}</div>
+            <div class="card-author">${book.author}, ${book.year}</div>
+            <div class="card-tags">${tagsHTML}</div>
+            <div class="card-meta">${book.read_time} read · Added ${formatDate(book.date_added)}</div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function formatDate(str) {
+      const d = new Date(str);
+      return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
