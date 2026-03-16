@@ -86,5 +86,16 @@
     "cover": "https://covers.openlibrary.org/b/isbn/9780525950790-L.jpg",
     "date_added": "2026-03-01",
     "read_time": "20 min"
+  },
+  {
+    "slug": "the-reason-for-god",
+    "title": "The Reason for God",
+    "author": "Timothy Keller",
+    "year": 2008,
+    "tags": ["Apologetics", "Faith", "Philosophy", "Theology"],
+    "category": "Apologetics",
+    "cover": "https://covers.openlibrary.org/b/isbn/9780525950493-L.jpg",
+    "date_added": "2026-03-01",
+    "read_time": "40 min"
   }
 ]
