@@ -11,7 +11,6 @@ readless/
 ├── books/
 │   └── {slug}/
 │       ├── index.html      ← AI-generated summary page
-│       └── metadata.json   ← Title, author, tags, cover, date
 └── README.md
 ```
 
@@ -25,8 +24,10 @@ Claude will output a complete `index.html` file.
 ### Step 2 — Add the files
 ```
 books/{slug}/index.html      ← paste Claude's output here
-books/{slug}/metadata.json   ← create this (see format below)
 ```
+
+### Step 3 — Update the index
+Add an entry to `books-index.json` with the metadata below.
 
 **metadata.json format:**
 ```json
@@ -46,9 +47,6 @@ books/{slug}/metadata.json   ← create this (see format below)
 **Finding cover images:**
 Use Open Library: `https://covers.openlibrary.org/b/isbn/{ISBN}-L.jpg`
 Or use any direct image URL.
-
-### Step 3 — Update the index
-Add an entry to `books-index.json` matching the metadata above.
 
 ### Step 4 — Publish
 ```bash
