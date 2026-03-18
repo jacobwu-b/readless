@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Faith — Helen Roseveare · ReadLess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fff;
+    --text: #0a0a0a;
+    --subtext: #444;
+    --label: #888;
+    --divider: #e5e5e5;
+    --tag-bg: #f0f0f0;
+    --tag-color: #444;
+    --thesis-border: #111;
+    --thesis-color: #111;
+    --pq-border: #0a0a0a;
+    --pq-text: #111;
+    --table-header-bg: #0a0a0a;
+    --table-header-text: #fff;
+    --table-row-alt: #fafafa;
+    --table-border: #e0e0e0;
+    --reflect-numeral: #e0e0e0;
+    --reflect-text: #0a0a0a;
+    --footer-border: #e5e5e5;
+    --footer-text: #aaa;
+    --topbar-border: #111;
+    --title-color: #0a0a0a;
+    --subtitle-color: #555;
+    --back-color: #888;
+
+    --green: #0a8a5c;
+    --red: #c0392b;
+    --amber: #b07800;
+    --blue: #1a4db0;
+    --purple: #5b3fa0;
+    --grey: #888;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--back-color);
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--text); }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1.5px solid var(--topbar-border);
+    margin-bottom: 40px;
+  }
+  .topbar-left {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+
+  .book-header { margin-bottom: 36px; }
+  .book-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+    color: var(--title-color);
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  .book-title-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--subtitle-color);
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  .book-subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--subtitle-color);
+    margin-bottom: 16px;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    border-radius: 4px;
+    padding: 4px 11px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .date-added {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-top: 12px;
+  }
+
+  .section-divider {
+    border: none;
+    border-top: 0.5px solid var(--divider);
+    margin: 36px 0;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .label-green  { color: var(--green); }
+  .label-red    { color: var(--red); }
+  .label-amber  { color: var(--amber); }
+  .label-blue   { color: var(--blue); }
+  .label-purple { color: var(--purple); }
+  .label-grey   { color: var(--grey); }
+
+  .thesis {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--thesis-color);
+    border-left: 2px solid var(--thesis-border);
+    padding-left: 16px;
+  }
+
+  .insight-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .insight-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 7px;
+  }
+  .dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+  }
+  .dot-green { background: var(--green); }
+  .dot-red   { background: var(--red); }
+  .dot-blue  { background: var(--blue); }
+
+  .sub-bullets {
+    list-style: none;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sub-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 12.5px;
+    color: var(--subtext);
+    line-height: 1.55;
+  }
+  .sub-dot {
+    flex-shrink: 0;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #bbb;
+    margin-top: 7px;
+  }
+
+  .pull-quote-wrap {
+    border-top: 1.5px solid var(--pq-border);
+    border-bottom: 1.5px solid var(--pq-border);
+    padding: 28px 0;
+    margin: 36px 0;
+  }
+  .pull-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--pq-text);
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 0.5px solid var(--table-border);
+    font-size: 13px;
+  }
+  .compare-table thead tr { background: var(--table-header-bg); color: var(--table-header-text); }
+  .compare-table thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .compare-table tbody tr:nth-child(even) { background: var(--table-row-alt); }
+  .compare-table tbody tr:nth-child(odd)  { background: var(--bg); }
+  .compare-table tbody td {
+    padding: 10px 14px;
+    border-top: 0.5px solid var(--table-border);
+    color: var(--subtext);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .compare-table tbody td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    width: 28%;
+  }
+
+  .reflection-list { display: flex; flex-direction: column; gap: 28px; }
+  .reflection-item { display: flex; align-items: flex-start; gap: 16px; }
+  .reflect-numeral {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--reflect-numeral);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .reflect-question { font-size: 13px; color: var(--reflect-text); line-height: 1.6; }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid var(--footer-border);
+    padding-top: 18px;
+    margin-top: 48px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--footer-text);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0a;
+      --text: #f0f0f0;
+      --subtext: #888;
+      --label: #555;
+      --divider: #1a1a1a;
+      --tag-bg: #1a1a1a;
+      --tag-color: #888;
+      --thesis-border: #555;
+      --thesis-color: #ccc;
+      --pq-border: #444;
+      --pq-text: #ccc;
+      --table-header-bg: #1a1a1a;
+      --table-header-text: #f0f0f0;
+      --table-row-alt: #111;
+      --table-border: #1a1a1a;
+      --reflect-numeral: #222;
+      --reflect-text: #888;
+      --footer-border: #1a1a1a;
+      --footer-text: #444;
+      --topbar-border: #333;
+      --title-color: #f0f0f0;
+      --subtitle-color: #888;
+      --back-color: #555;
+    }
+    .compare-table tbody tr:nth-child(odd) { background: #0a0a0a; }
+    .sub-dot { background: #444; }
+    .book-title-sub { color: #888; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="../../">← All books</a>
+
+<div class="topbar">
+  <div class="topbar-left">ReadLess · Book Intelligence</div>
+  <div class="topbar-right">
+    <span>Missionary Biography</span>
+    <span>25 min read</span>
+  </div>
+</div>
+
+<div class="book-header">
+  <div class="book-title">Living Faith</div>
+  <div class="book-title-sub">Willing to be Stirred as a Pot of Paint</div>
+  <div class="book-subtitle">Helen Roseveare · 2007</div>
+  <div class="tags">
+    <span class="tag">Faith</span>
+    <span class="tag">Suffering</span>
+    <span class="tag">Missions</span>
+    <span class="tag">Surrender</span>
+  </div>
+  <div class="date-added">Added March 2026</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- CORE THESIS -->
+<div class="section-label label-grey">Core Thesis</div>
+<p class="thesis">
+  Faith is not a static conviction held in the mind but a living, dynamic response to God that must be continuously stirred — disturbed, mixed, and remixed — if it is to remain usable rather than separating and settling into inert layers of belief without practice. Drawing from decades as a missionary physician in the Congo, Helen Roseveare argues that the faith God asks for is the kind that costs something: not the comfortable assent of quiet seasons, but the willingness to be held upside down, exposed, and reshaped when God's purposes require it. The deepest test of faith is not whether we trust God when the outcome is favorable, but whether we trust his character when the outcome is devastating.
+</p>
+
+<hr class="section-divider">
+
+<!-- KEY INSIGHTS -->
+<div class="section-label label-green">Key Insights</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The "pot of paint" image is a theology, not a metaphor — faith that is not stirred separates and becomes unusable</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare draws the image from the painter's experience: paint left unstirred separates into distinct layers — the pigment sinks, the medium rises — and becomes either too thick to apply or too thin to cover. Both parts exist, but they cannot function.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Faith works the same way: doctrine and practice, belief and obedience, knowledge and love each require the other. Unstirred faith produces people who can articulate theology but cannot act from it — or who act vigorously from emotion without theological grounding.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>God's instruments of stirring are not primarily the pleasant circumstances of answered prayer, but the disruptive ones: illness, opposition, unanswered prayer, betrayal, loss. These are not interruptions to the life of faith; they are its primary formation tools.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The willingness to be stirred is itself a choice — one can resist the stirring stick, harden around separation, and still function religiously while remaining spiritually inert.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Roseveare's capture and assault by Congolese rebels in 1964 became the defining test of her faith — and her account of it reframes suffering as privilege, not punishment</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>During the Simba rebellion, Roseveare was imprisoned, beaten, and assaulted over several months. Her subsequent reflection is not triumphalist — she writes with honesty about fear, despair, and the genuine temptation to abandon her faith entirely.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Her theological conclusion, earned rather than assumed: God asked her whether she was willing to be identified with Christ in his suffering — not suffering as punishment, but as participation in something redemptive and purposeful that she could not see from within it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The question she reports God asking her: "Can you thank me for trusting you with this experience even if I never tell you why?" — which reorients the believer's posture from demanding explanation to offering trust without it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is not a theology constructed in comfort and tested in theory — it is one forged in conditions most readers will never face, which gives it an authority that systematic arguments for suffering's goodness typically lack.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>The deepest obstacle to living faith is not doubt but comfort — settled ease is what prevents the stirring that keeps faith alive and effective</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare observes that the seasons when her faith was least alive were not seasons of persecution or hardship, but seasons of institutional success, competence, and recognition — when she was no longer dependent on God because human resources were sufficient.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Comfort produces a specific spiritual danger: the gradual replacement of active trust with background assumption — believing in God's provision in principle while practically organizing life to avoid needing it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is a particularly acute danger for Western Christians whose material circumstances rarely create the kind of dependency that Roseveare's Congo context made unavoidable — the absence of that dependency must be compensated for intentionally.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The stir she describes is not manufactured crisis but a willingness to be placed where human competence is genuinely insufficient — to choose risk, vulnerability, and need over security.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Faith's object matters more than faith's intensity — Roseveare's account is relentlessly christological, not generically spiritual</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare is precise about what she is trusting and why — her faith is not "faith in faith" or confidence in positive outcomes, but trust in the specific character of a God who himself entered suffering in the incarnation and cross.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The cross is not background theology for Roseveare but the load-bearing structure of her suffering's meaning — Christ's experience of abandonment, physical brutality, and purposeful death reframes her experience as participation rather than anomaly.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This prevents her account from collapsing into generic resilience literature — she is not modeling "how to endure hard things" but "how Christ's specific history makes hard things navigable without requiring their explanation."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The reader who engages her account without this christological center will find it encouraging but miss its sustaining logic — the comfort is not from Roseveare's example but from the God whose faithfulness her example demonstrates.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-green"></span>
+      <strong>Obedience often precedes understanding — Roseveare models a faith that acts before knowing why, on the basis of who God is rather than what he has explained</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Across her narrative, Roseveare repeatedly chose obedience in circumstances she did not understand and could not control — returning to Congo after evacuation, continuing medical work under hostile conditions, forgiving people who had harmed her before she felt like forgiving them.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Her framework: understanding is a gift that sometimes follows obedience, not a prerequisite for it. Waiting for comprehension before acting produces a faith that is perpetually at the starting line.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is practically controversial in an era that privileges authenticity and emotional alignment — Roseveare's model asks for volitional obedience that may run ahead of feeling, and trusts that the heart will follow the will's lead over time.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The distinction she draws: acting without understanding is not blind faith — it is trust based on a track record of God's character, evidenced over time in Scripture and personal history, even when the present moment is opaque.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<!-- PULL QUOTE -->
+<div class="pull-quote-wrap">
+  <div class="pull-quote">"Can you thank me for trusting you with this experience even if I never tell you why?"</div>
+</div>
+
+<!-- WATCH OUT FOR -->
+<div class="section-label label-red">Watch Out For</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Using Roseveare's account to create a suffering-as-achievement framework — valorizing pain rather than trusting God through it</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare is explicit that suffering is not good in itself — it is the relationship with God maintained through it that is formative. Seeking suffering, performing endurance, or treating pain as a spiritual credential inverts her entire argument.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The "privilege of suffering" language is easily misappropriated to pressure people who are genuinely broken — as if their suffering should produce immediate spiritual fruit or they are failing at something Roseveare succeeded at.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare reached her theology through decades and multiple seasons — not in a single crisis. Importing the conclusion without the journey produces a brittle framework that breaks when actually tested.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Reading "obedience before understanding" as a mandate for unquestioning compliance with human authority structures</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare's obedience is always obedience to God, verified through Scripture and prayer — never a blank submission to institutions, leaders, or cultural expectations.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>She herself made significant decisions that contradicted institutional advice (returning to Congo against mission board caution) — her faith was not compliance but discernment.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Applying her framework to justify submission to harmful authority figures, abusive relationships, or exploitative institutions is a serious misreading of what she models and advocates.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Treating her story as a standard for measuring one's own spiritual maturity — she explicitly discourages comparison</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare's account of sustained faith under extreme conditions is meant to encourage and instruct, not to set a performance benchmark against which readers should measure their own inadequacy.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The same God who sustained her in Congo is available to the reader in their particular circumstances — the calibration differs, but the resource is the same. The point is not "become like Roseveare" but "trust the God she trusted."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Reading her primarily as a moral exemplar rather than a witness to God's faithfulness mislocates the book's actual encouragement.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-red"></span>
+      <strong>Allowing the missions context to make the book feel irrelevant to non-missionary life — the principles apply wherever dependency and cost are present</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare's specific setting (colonial Congo, medical missions, political violence) can create a distance effect — "her situation was so extreme that these lessons don't apply to me."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>But the stirring she describes happens in every life: illness, relational rupture, vocational loss, unanswered prayer, and the slow erosion of comfortable assumptions are not uniquely missionary experiences.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The reader who dismisses the extreme context also dismisses the only context in which her theology was actually formed and tested — which is precisely what gives it weight beyond generic spiritual advice.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- CONCEPT COMPARISON -->
+<div class="section-label label-amber">Concept Comparison</div>
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Settled Faith</th>
+      <th>Stirred Faith</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State</td>
+      <td>Separated and layered — doctrine on one level, practice on another, emotion on another; each intact but unable to function together</td>
+      <td>Mixed and active — belief, obedience, and emotion integrated and mutually reinforcing; genuinely usable</td>
+    </tr>
+    <tr>
+      <td>Relationship to circumstances</td>
+      <td>Depends on favorable conditions to maintain appearance of vitality; exposed when the container is shaken</td>
+      <td>Functions precisely in the shaking — the disturbance that would destabilize settled faith is the condition in which stirred faith operates best</td>
+    </tr>
+    <tr>
+      <td>Response to suffering</td>
+      <td>Threat to be survived or explained away; suffering challenges the underlying assumptions on which the faith rests</td>
+      <td>Instrument of formation — not desired for its own sake, but received as the stirring stick God uses to keep faith alive and applicable</td>
+    </tr>
+    <tr>
+      <td>Relationship to God</td>
+      <td>Transactional and conditional: God is good when outcomes confirm it; silence or loss creates crisis</td>
+      <td>Based on character rather than outcomes: trust in who God is holds even when what he does is opaque or painful</td>
+    </tr>
+    <tr>
+      <td>Obedience pattern</td>
+      <td>Follows understanding — waits for clarity before acting, which produces a faith that is perpetually in preparation</td>
+      <td>Precedes understanding — acts on the basis of God's known character, trusting that comprehension may follow but is not required first</td>
+    </tr>
+    <tr>
+      <td>Long-term fruit</td>
+      <td>Religious stability that may conceal spiritual inertia; works well in favorable environments, fails under pressure</td>
+      <td>A faith that has been tested and is therefore genuinely trustworthy — both to the person who holds it and to those watching from the outside</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- APPLY THIS -->
+<div class="section-label label-blue">Apply This</div>
+<ul class="insight-list">
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Identify the current "stirring" in your life and name it as such rather than treating it as a problem to solve</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Take 15 minutes to write down the one circumstance that is most disturbing your life right now — the thing you most wish would stop or resolve. Then write one sentence beginning: "If this is God's stirring stick, what might it be mixing together in me that has separated?"</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The exercise does not require you to feel peaceful about the disturbance — it only requires honest naming. Roseveare was not peaceful in her prison; she was honest about her fear and chose trust anyway.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Return to this exercise weekly for a month and note whether your answer to the second question changes as the circumstance continues — the meaning of a stirring often becomes clearer slowly, not all at once.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Practice Roseveare's "can you thank me without knowing why" question as a daily prayer discipline</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Each morning, identify one thing in your life that you currently cannot explain or resolve — an unanswered prayer, a closed door, a painful relationship, a loss. Then speak aloud or write: "I cannot understand this, but I choose to trust your character in it."</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>This is not resignation or positive thinking — it is a volitional act of faith that names the confusion honestly and then orients toward God's known character despite it.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Track over 30 days whether this practice shifts your interior posture toward the circumstance — Roseveare's model predicts that obedience-precedes-feeling, and that the emotional response often follows the volitional one rather than preceding it.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Conduct a "comfort audit" to identify where settled ease has replaced active dependence in your spiritual life</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Write honest answers to these three questions: (1) In which areas of my life am I never genuinely in need of God's intervention — where human competence is fully sufficient? (2) Where have I organized my life to minimize risk and vulnerability? (3) When did I last pray for something I could not produce myself?</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The answers locate the zones of settled faith — not to manufacture crisis there, but to become conscious of the separation that comfort produces and to intentionally expose those zones to Scripture and prayer rather than management.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Roseveare's model suggests that the answer is not to engineer hardship but to stop avoiding the genuine risks of obedience — to say yes to the thing God is prompting that you've been declining because it exceeds your resources.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Choose one act of obedience this week that precedes your understanding or emotional readiness</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span>Identify something you know you should do — extend forgiveness, make a confession, take a risk in service, give something costly — that you have been postponing until you feel ready, understand why, or have more confidence.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Do it this week, before the feeling arrives. Tell one person you trust that you are doing it and why — this creates external accountability and prevents the indefinite deferral that waiting for readiness produces.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>After acting, write one paragraph: "Before I did this I felt [X]. After I did this I noticed [Y]." Roseveare's claim is that obedience frequently generates the understanding and peace that waiting for them never produces — this is the empirical test of her model.</li>
+    </ul>
+  </li>
+
+  <li class="insight-item">
+    <div class="insight-title">
+      <span class="dot dot-blue"></span>
+      <strong>Read one chapter of Roseveare's earlier memoir alongside this book to ground the abstract claims in her specific history</strong>
+    </div>
+    <ul class="sub-bullets">
+      <li class="sub-bullet"><span class="sub-dot"></span><em>Living Faith</em> draws on the history recorded in more detail in her earlier books — <em>Give Me This Mountain</em>, <em>He Gave Us a Valley</em>, and <em>Digging Ditches</em>. Reading one chapter of those alongside her theological reflections here closes the gap between principle and practice.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>The narrative books show the circumstances from inside the experience; <em>Living Faith</em> shows the theology forged by them. They are more powerful together — the suffering becomes less abstract, and the theology becomes less tidy.</li>
+      <li class="sub-bullet"><span class="sub-dot"></span>Specific pairing: read the 1964 rebellion chapter from <em>Give Me This Mountain</em> alongside Chapter 4 or 5 of <em>Living Faith</em> — the theological claim and its biographical origin become mutually illuminating.</li>
+    </ul>
+  </li>
+
+</ul>
+
+<hr class="section-divider">
+
+<!-- REFLECTION QUESTIONS -->
+<div class="section-label label-purple">Reflection Questions</div>
+<div class="reflection-list">
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">1</div>
+    <div class="reflect-question">Roseveare's central image is of faith that has separated — belief layered away from practice, doctrine from obedience, knowledge from love — and become unusable as a result. If you were honest about your own faith right now, which layers have separated most? Where do you hold convictions you do not live from, or engage in practices disconnected from genuine belief? What has the settling been produced by — neglect, comfort, disappointment, or something else?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">2</div>
+    <div class="reflect-question">God's question to Roseveare in prison was: "Can you thank me for trusting you with this experience even if I never tell you why?" Is there a circumstance in your life — current or past — to which you could honestly bring that question? Not as a performance of spiritual maturity, but as a genuine offer: to release the demand for explanation and trust the character of the one who is asking. What would have to change in your understanding of God for that to be possible?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">3</div>
+    <div class="reflect-question">Roseveare argues that comfort is a more dangerous obstacle to living faith than suffering — that the seasons of institutional success and settled competence were spiritually more deadening than the Congo prison. Where in your life is human adequacy most reliably substituting for genuine dependence on God? And if that sufficiency were removed tomorrow, what would you find in its place — a faith that has stayed alive under the surface, or a separation you haven't noticed because you haven't needed to reach for it?</div>
+  </div>
+
+  <div class="reflection-item">
+    <div class="reflect-numeral">4</div>
+    <div class="reflect-question">Roseveare modeled obedience that consistently preceded understanding — returning to Congo before she knew why it was right, forgiving before she felt forgiving, trusting before she felt trust. Is there something in your own life that you know God is asking of you, which you have been declining until you understand it better, feel more ready, or have more clarity? What is one concrete step you could take this week that would be an act of trust rather than a waiting for certainty you may never receive?</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>ReadLess · Book Intelligence</span>
+  <span>Living Faith · Helen Roseveare · 2007</span>
+</div>
+
+</body>
+</html>
