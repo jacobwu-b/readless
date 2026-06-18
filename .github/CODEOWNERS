@@ -1,0 +1,22 @@
+# CODEOWNERS — auto-assigns reviewers and gates merge for protected paths.
+# Syntax: <pattern> <@user-or-team> [<@user-or-team>...]
+# More specific lines override less specific ones.
+
+# Default — everything needs review by core
+* @[org]/core
+
+# The operating system itself — changes need senior sign-off
+/CLAUDE.md            @[org]/staff
+/.claude/             @[org]/staff
+/.github/             @[org]/staff
+/docs/decisions/      @[org]/staff
+
+# Specs — product + engineering
+/docs/specs/          @[org]/core @[org]/product
+
+# Migrations — extra eyes on irreversible work
+/migrations/          @[org]/staff
+/db/migrations/       @[org]/staff
+
+# Evals — quality gate, owned by staff
+/evals/               @[org]/staff

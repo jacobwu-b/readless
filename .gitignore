@@ -1,3 +1,38 @@
+# Secrets — never commit. Use .env.example as the schema.
 .env
+.env.*
+!.env.example
+
+# OS / editor
 .DS_Store
-public/
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs / temp
+*.log
+*.tmp
+*.pid
+.cache/
+tmp/
+temp/
+
+# Build / coverage
+dist/
+build/
+coverage/
+*.lcov
+.nyc_output/
+
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
+
+# Local agent state — never commit
+.claude/local/
+.claude/sessions/
+.claude/settings.local.json

@@ -1,73 +1,37 @@
-# ReadLess · Book Intelligence
+# ReadLess
 
-A personal repository of AI-generated book summaries. Distilled insights, actionable takeaways, and the ideas that matter — without reading the books.
+ReadLess turns books into short, structured, AI-generated briefs and serves them as a fast static reading site backed by serverless functions.
 
-## Structure
+## Quick start
 
-```
-readless/
-├── index.html              ← Grid view (the homepage)
-├── books-index.json        ← Master book list, consumed by the grid
-├── books/
-│   └── {slug}/
-│       ├── index.html      ← AI-generated summary page
-└── README.md
-```
-
-## Adding a New Book
-
-### Step 1 — Generate the summary
-Open Claude (desktop or web) and paste the contents of `book-summary-prompt.md`.
-Fill in the 6 fields at the top: title, author, year, category, tags, date.
-Claude will output a complete `index.html` file.
-
-### Step 2 — Add the files
-```
-books/{slug}/index.html      ← paste Claude's output here
-```
-
-### Step 3 — Update the index
-Add an entry to `books-index.json` with the metadata below.
-
-**metadata.json format:**
-```json
-{
-  "slug": "your-book-slug",
-  "title": "Book Title",
-  "author": "Author Name",
-  "year": 2024,
-  "tags": ["tag1", "tag2", "tag3"],
-  "category": "Category",
-  "cover": "https://covers.openlibrary.org/b/isbn/YOUR_ISBN-L.jpg",
-  "date_added": "2026-03-16",
-  "read_time": "10 min"
-}
-```
-
-**Finding cover images:**
-Use Open Library: `https://covers.openlibrary.org/b/isbn/{ISBN}-L.jpg`
-Or use any direct image URL.
-
-### Step 4 — Publish
 ```bash
-git add .
-git commit -m "Add: {Book Title}"
-git push
+# install
+npm install
+
+# run (Vercel dev server — serves the site and the api/ functions)
+npm run dev
+
+# test
+npm test
 ```
 
-## Deploying to GitHub Pages
+Briefs are generated with the Anthropic API and stored in Vercel KV. Copy `.env.example` to `.env` and fill in the required keys (`vercel env pull` populates the KV variables for a linked project).
 
-1. Push this repo to GitHub
-2. Go to Settings → Pages
-3. Set source to `main` branch, root `/`
-4. Your site will be live at `https://{username}.github.io/{repo-name}/`
+## Working in this repo
 
-## Finding ISBNs
-- [Open Library](https://openlibrary.org) — search the book, find ISBN-13
-- [ISBN Search](https://isbnsearch.org)
+This repo is built for human + AI collaboration. The operating model is documented in [`CLAUDE.md`](./CLAUDE.md). Read it before contributing — humans included.
 
-## Tech Stack
-- Zero dependencies — pure HTML, CSS, vanilla JS
-- Google Fonts (Fraunces + Inter) — loaded via CDN
-- GitHub Pages — free static hosting
-- No build step, no framework, no database
+- **Specs** live in [`docs/specs/`](./docs/specs/). Features start there, not in code.
+- **Architectural decisions** live in [`docs/decisions/`](./docs/decisions/) as ADRs.
+- **PR protocol** is in `CLAUDE.md` §5. Squash-merge to main only.
+- **Repository GitHub settings** are documented in [`.github/repo-settings.md`](./.github/repo-settings.md).
+
+## Stack
+
+- TypeScript / Vercel Functions (Node) / Vercel KV / Vercel hosting — with the Anthropic API for brief generation and `zod` for validation.
+
+## License
+
+Copyright (c) 2026 Zhengyuan Wu. All Rights Reserved.
+
+This product is protected by copyright and distributed under licenses restricting copying, distribution, and decompilation. See [`LICENSE`](./LICENSE) for full terms.

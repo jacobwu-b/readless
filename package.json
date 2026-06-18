@@ -1,0 +1,26 @@
+{
+  "name": "readless",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ReadLess — AI-generated book briefs, end to end.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"**/*.test.ts\"",
+    "migrate": "tsx scripts/migrate-briefs.ts",
+    "build:seeds": "tsx scripts/migrate-briefs.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0",
+    "@vercel/kv": "^3.0.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@vercel/node": "^5.0.0",
+    "node-html-parser": "^7.0.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
