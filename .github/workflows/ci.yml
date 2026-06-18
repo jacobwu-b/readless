@@ -5,7 +5,12 @@
 #
 # Stack: TypeScript on Vercel (Node). `tsc --noEmit` is the project's
 # static-analysis gate — there is no separate linter yet, so Lint and Types
-# both run the typecheck. Swap in a dedicated linter here if one is adopted.
+# both run the typecheck. Vercel builds on deploy, so Build only verifies the
+# project compiles. Swap in a dedicated linter/bundler here if one is adopted.
+#
+# Bootstrap note: until application source lands, the typecheck steps short-
+# circuit when no .ts files are tracked. They become real checks automatically
+# once the first source file is committed.
 
 name: CI
 
@@ -38,10 +43,15 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci
       # No standalone linter yet — TypeScript strict mode is the gate.
       - name: Lint (typecheck)
-        run: npm run typecheck
+        run: |
+          if [ -n "$(git ls-files '*.ts' '*.tsx')" ]; then
+            npm run typecheck
+          else
+            echo "No TypeScript sources yet — nothing to lint."
+          fi
 
   types:
     name: Types
@@ -53,9 +63,14 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci
       - name: Typecheck
-        run: npm run typecheck
+        run: |
+          if [ -n "$(git ls-files '*.ts' '*.tsx')" ]; then
+            npm run typecheck
+          else
+            echo "No TypeScript sources yet — nothing to typecheck."
+          fi
 
   test:
     name: Test
@@ -67,7 +82,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci
+      # Node's built-in runner auto-discovers *.test.ts and exits 0 when none exist.
       - name: Test
         run: npm test
 
@@ -81,13 +97,15 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - name: Install
-        run: npm install --no-audit --no-fund
-      # `vercel build` compiles to .vercel/output without deploying. It needs a
-      # linked project + VERCEL_TOKEN to pull env; provide them as secrets.
-      - name: Build
-        run: npm run build
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npm ci
+      # Vercel builds on deploy; CI only verifies the project compiles.
+      - name: Build (compile check)
+        run: |
+          if [ -n "$(git ls-files '*.ts' '*.tsx')" ]; then
+            npm run typecheck
+          else
+            echo "No TypeScript sources yet — nothing to build."
+          fi
 
   # Evals: regression suite for the AI agent. PRs that regress evals don't merge.
   # Disable this job until you have ≥20 eval tasks in evals/tasks/ (see brief, Pillar 5).
@@ -102,7 +120,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci
       - name: Run evals
         run: npm run evals
 
