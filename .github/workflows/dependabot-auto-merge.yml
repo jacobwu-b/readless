@@ -38,6 +38,7 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
 
       - name: Hold major updates for monthly reconciliation
         if: steps.metadata.outputs.update-type == 'version-update:semver-major'
@@ -45,6 +46,9 @@ jobs:
           # Ensure the label exists before adding it. settings.yml declares it,
           # but the Probot Settings app may not have synced yet — without this
           # guard `--add-label` errors with "label not found" and the job fails.
+          # GH_REPO (set below) tells gh which repo to target: this job has no
+          # actions/checkout, so `gh label create` has no local git remote to
+          # infer from and would otherwise fail with "not a git repository".
           gh label create "dependencies:major" \
             --color b60205 \
             --description "Major dependency bump — held for monthly reconciliation, not auto-merged" \
@@ -54,3 +58,4 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
