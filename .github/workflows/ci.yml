@@ -1,0 +1,124 @@
+# CI — required checks for every PR.
+#
+# These job names must match the required status checks configured in
+# .github/repo-settings.md. If you rename a job, update branch protection.
+#
+# Stack: TypeScript on Vercel (Node). `tsc --noEmit` is the project's
+# static-analysis gate — there is no separate linter yet, so Lint and Types
+# both run the typecheck. Swap in a dedicated linter here if one is adopted.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  # Run the required checks for PRs queued in the merge queue (see
+  # repo-settings.md → "Branch protection — main").
+  merge_group:
+
+# Cancel superseded runs on the same branch — saves CI minutes during
+# rapid agent iteration.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm install --no-audit --no-fund
+      # No standalone linter yet — TypeScript strict mode is the gate.
+      - name: Lint (typecheck)
+        run: npm run typecheck
+
+  types:
+    name: Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Test
+        run: npm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm install --no-audit --no-fund
+      # `vercel build` compiles to .vercel/output without deploying. It needs a
+      # linked project + VERCEL_TOKEN to pull env; provide them as secrets.
+      - name: Build
+        run: npm run build
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+  # Evals: regression suite for the AI agent. PRs that regress evals don't merge.
+  # Disable this job until you have ≥20 eval tasks in evals/tasks/ (see brief, Pillar 5).
+  evals:
+    name: Evals
+    runs-on: ubuntu-latest
+    if: false # flip to `true` once evals/tasks/ has ≥20 tasks
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Run evals
+        run: npm run evals
+
+  # Secret scan — defence in depth. GitHub also scans on push, but this
+  # blocks the merge if the push scan was bypassed.
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

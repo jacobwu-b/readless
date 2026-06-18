@@ -1,0 +1,56 @@
+name: Dependabot auto-merge
+
+# Enable auto-merge for low-risk Dependabot PRs (semver minor/patch, which covers
+# the grouped dev/prod batches in dependabot.yml). Auto-merge waits for the
+# required status checks, so the test gate is never bypassed — only the human
+# review click is, and only via the Dependabot bypass on main's ruleset
+# (see repo-settings.md → "Branch protection — main").
+#
+# Major bumps are never auto-merged: they are labeled `dependencies:major` and
+# left open for the monthly reconciliation (see dependabot-reconciliation.yml).
+# CLAUDE.md §6 requires changelog review for major bumps.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    # Only act on Dependabot's own PRs.
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for minor and patch updates
+        if: >-
+          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Hold major updates for monthly reconciliation
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          # Ensure the label exists before adding it. settings.yml declares it,
+          # but the Probot Settings app may not have synced yet — without this
+          # guard `--add-label` errors with "label not found" and the job fails.
+          gh label create "dependencies:major" \
+            --color b60205 \
+            --description "Major dependency bump — held for monthly reconciliation, not auto-merged" \
+            --force
+          gh pr edit "$PR_URL" --add-label "dependencies:major"
+          gh pr comment "$PR_URL" --body "Holding this **major** update for the monthly dependency reconciliation. It will be picked up in the next \`Monthly dependency reconciliation\` tracking issue rather than auto-merged."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
