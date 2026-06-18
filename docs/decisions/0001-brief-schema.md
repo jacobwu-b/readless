@@ -24,6 +24,13 @@ cannot be forced to honor server-side (e.g. exactly 5 key insights) are enforced
 The schema is strict (unknown fields rejected). Metadata (slug, title, author, year, category, tags,
 cover, readTime, dateAdded) lives on the same record alongside the editorial sections.
 
+The enforced section counts are exported as `COUNTS` from `lib/schema.ts` (the prompt builder reads
+the same constants, so the two cannot drift): `keyInsights` exactly 5 and `reflectionQuestions`
+exactly 4 (prompt and existing corpus agree); `watchOutFor` 3–4; `applyThis` 3–5; `comparison`
+optional with at least 2 columns and 2 rows, each row one cell per column. The `applyThis` minimum is
+widened from the prompt's 4 to 3 so the existing curated briefs (e.g. *Sapiens*, which has 3) migrate
+under `0004-seed-migration` without editorial changes — that migration's stated non-goal.
+
 ## Consequences
 
 **Positive**
