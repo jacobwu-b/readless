@@ -36,25 +36,17 @@
     </form>
 
     <div id="status" hidden></div>
-    <article id="brief"></article>
   </main>
 
-  <script src="/assets/brief.js"></script>
   <script>
     var form = document.getElementById('gen-form');
     var submitBtn = document.getElementById('submit');
     var statusEl = document.getElementById('status');
-    var briefEl = document.getElementById('brief');
 
     function showStatus(kind, message) {
       statusEl.className = 'gen-status gen-status--' + kind;
       statusEl.textContent = message;
       statusEl.hidden = false;
-    }
-
-    function clearStatus() {
-      statusEl.hidden = true;
-      statusEl.textContent = '';
     }
 
     form.addEventListener('submit', async function (event) {
@@ -64,7 +56,6 @@
       var author = document.getElementById('author').value.trim();
       if (!title) return;
 
-      briefEl.innerHTML = '';
       submitBtn.disabled = true;
       showStatus('loading', 'Generating brief for "' + title + '"… this can take a minute.');
 
@@ -84,11 +75,12 @@
         }
 
         var brief = await res.json();
-        clearStatus();
-        briefEl.innerHTML = window.renderBrief(brief);
+        // The brief is persisted; route to its permalink rather than rendering
+        // inline. replace() keeps the form out of history so Back returns to the
+        // gallery, not this page.
+        location.replace('brief.html?slug=' + encodeURIComponent(brief.slug));
       } catch (err) {
         showStatus('error', "Couldn't generate that brief: " + err.message + ' Please try again.');
-      } finally {
         submitBtn.disabled = false;
       }
     });
