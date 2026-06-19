@@ -1,0 +1,109 @@
+/*
+ * ReadLess brief design system.
+ *
+ * Extracted verbatim from the hand-built per-book pages (e.g. books/atomic-habits/)
+ * so the data-driven renderer in brief.js has visual parity with the curated corpus.
+ * The `bs-*` classes and the dark-mode block below are the source of truth for brief
+ * styling; the page chrome and the submit-surface styles share the same palette.
+ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PAGE CHROME ── */
+header { border-bottom: 1.5px solid #111; padding: 0 48px; }
+.header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+.site-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #0a0a0a; text-decoration: none; letter-spacing: -0.02em; }
+.back { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #999; text-decoration: none; }
+.back:hover { color: #555; }
+main { max-width: 760px; margin: 0 auto; padding: 56px 48px 96px; }
+
+/* ── SUBMIT SURFACE ── */
+.gen-intro { margin-bottom: 32px; }
+.gen-intro h1 { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 8px; }
+.gen-intro p { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #555; line-height: 1.6; }
+.gen-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.gen-field { display: flex; flex-direction: column; gap: 6px; }
+.gen-label { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #888; }
+.gen-input { height: 42px; padding: 0 14px; border: 0.5px solid #e5e5e5; border-radius: 6px; background: #fff; color: #111; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
+.gen-input:focus { border-color: #999; }
+.gen-input::placeholder { color: #999; }
+.gen-submit { align-self: flex-start; margin-top: 4px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 11px 22px; border-radius: 6px; border: 1.5px solid #0a0a0a; background: #0a0a0a; color: #fff; cursor: pointer; transition: opacity 0.15s; }
+.gen-submit:hover { opacity: 0.85; }
+.gen-submit:disabled { opacity: 0.5; cursor: default; }
+
+/* ── STATUS (loading / error) ── */
+.gen-status { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 16px; line-height: 1.6; padding: 18px 0; }
+.gen-status--loading { color: #555; }
+.gen-status--error { color: #c0392b; }
+
+/* ── BRIEF ── */
+.bs-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1.5px solid #111; margin-bottom: 22px; }
+.bs-site { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #888; }
+.bs-meta { font-size: 11px; color: #888; }
+.bs-title { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 700; color: #0a0a0a; margin: 0 0 6px; line-height: 1.12; letter-spacing: -0.02em; }
+.bs-sub { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #555; margin: 0 0 18px; }
+.bs-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; }
+.bs-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; background: #f0f0f0; color: #444; padding: 4px 11px; border-radius: 4px; }
+.bs-thesis-block { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 0.5px solid #e5e5e5; }
+.bs-section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+.bs-thesis { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 16px; color: #1a1a1a; line-height: 1.75; margin: 0; border-left: 2px solid #111; padding-left: 16px; }
+.bs-section { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 0.5px solid #e5e5e5; }
+.bs-list { list-style: none; margin: 0; padding: 0; }
+.bs-list > li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #111; margin-bottom: 16px; }
+.bs-list > li:last-child { margin-bottom: 0; }
+.bs-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.bs-item { flex: 1; }
+.bs-item-title { font-weight: 500; font-size: 13px; color: #0a0a0a; margin-bottom: 5px; line-height: 1.4; }
+.bs-sub-list { list-style: none; margin: 0; padding: 0; }
+.bs-sub-list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: #444; line-height: 1.55; margin-bottom: 4px; }
+.bs-sub-list li:last-child { margin-bottom: 0; }
+.bs-subdot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; margin-top: 7px; flex-shrink: 0; }
+.bs-quote { border-top: 1.5px solid #0a0a0a; border-bottom: 1.5px solid #0a0a0a; padding: 18px 0; margin: 0 0 24px; }
+.bs-quote p { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; color: #1a1a1a; margin: 0; line-height: 1.6; }
+.bs-table-wrap { border-radius: 8px; overflow: hidden; border: 0.5px solid #e0e0e0; }
+.bs-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.bs-table thead tr { background: #0a0a0a; }
+.bs-table thead th { padding: 9px 13px; color: #fff; font-weight: 500; font-size: 11px; letter-spacing: 0.05em; text-align: left; }
+.bs-table tbody tr { border-bottom: 0.5px solid #f0f0f0; }
+.bs-table tbody tr:last-child { border-bottom: none; }
+.bs-table tbody tr:nth-child(even) { background: #fafafa; }
+.bs-table td { padding: 9px 13px; color: #333; vertical-align: top; line-height: 1.5; }
+.bs-table td:first-child { font-weight: 500; color: #111; }
+.bs-qs { display: flex; flex-direction: column; gap: 13px; }
+.bs-q { display: flex; gap: 12px; align-items: flex-start; }
+.bs-qnum { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: #e0e0e0; line-height: 1; flex-shrink: 0; width: 22px; }
+.bs-qtext { font-size: 13px; color: #333; line-height: 1.65; padding-top: 3px; }
+.bs-footer { border-top: 0.5px solid #e5e5e5; padding-top: 14px; margin-top: 8px; display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; }
+
+@media (prefers-color-scheme: dark) {
+  body { background: #0a0a0a; color: #f0f0f0; }
+  header { border-color: #333; } .site-name { color: #f0f0f0; }
+  .gen-intro h1 { color: #f0f0f0; } .gen-intro p { color: #888; }
+  .gen-label { color: #888; }
+  .gen-input { background: #0a0a0a; color: #f0f0f0; border-color: #1e1e1e; }
+  .gen-input:focus { border-color: #555; }
+  .gen-input::placeholder { color: #555; }
+  .gen-submit { background: #f0f0f0; color: #0a0a0a; border-color: #f0f0f0; }
+  .gen-status--loading { color: #888; }
+  .bs-bar { border-color: #333; } .bs-title { color: #f0f0f0; } .bs-sub { color: #888; }
+  .bs-tag { background: #1a1a1a; color: #888; }
+  .bs-thesis-block { border-color: #222; } .bs-thesis { color: #ccc; border-color: #555; }
+  .bs-section { border-color: #1a1a1a; }
+  .bs-list > li { color: #e0e0e0; } .bs-item-title { color: #f0f0f0; }
+  .bs-sub-list li { color: #888; } .bs-subdot { background: #333; }
+  .bs-quote { border-color: #444; } .bs-quote p { color: #ccc; }
+  .bs-table-wrap { border-color: #222; } .bs-table thead tr { background: #1a1a1a; }
+  .bs-table tbody tr:nth-child(even) { background: #111; } .bs-table tbody tr { border-color: #1a1a1a; }
+  .bs-table td { color: #888; } .bs-table td:first-child { color: #ddd; }
+  .bs-qnum { color: #222; } .bs-qtext { color: #888; }
+  .bs-footer { border-color: #1a1a1a; color: #444; }
+}
+
+@media (max-width: 640px) { header, main { padding-left: 24px; padding-right: 24px; } }
