@@ -1,10 +1,14 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+import { getCachedSlug, setCachedSlug } from "../lib/cache";
 import { generateBrief } from "../lib/generate";
+import type { KVClient } from "../lib/kv";
 import { logger } from "../lib/logger";
+import type { Brief } from "../lib/schema";
+import { getBrief, saveBrief } from "../lib/store";
 
 /** The boundary `handler` calls. Injectable so tests mock generation cleanly. */
-type GenerateBrief = (title: string, author?: string) => Promise<unknown>;
+type GenerateBrief = (title: string, author?: string) => Promise<Brief>;
 
 /** Reads `req.body`, tolerating the raw-string case Vercel may hand us. */
 function parseBody(body: unknown): Record<string, unknown> | undefined {
@@ -22,19 +26,25 @@ function parseBody(body: unknown): Record<string, unknown> | undefined {
 }
 
 /**
- * `POST /api/generate` — thin handler over `generateBrief`.
+ * `POST /api/generate` — generate a brief, persist it, and dedup repeats.
  *
- * Validates the body shape, returns the Brief on success, and maps the outcomes to
- * status codes: 405 for non-POST, 400 for a missing/blank title, 502 when generation
- * fails. Persistence and input caps are out of scope (see specs 0002 / 0005).
+ * Validates the body shape, then short-circuits on a repeat: a normalized
+ * (title|author) request that has already been generated returns the stored brief
+ * without calling the model (spec 0002). Otherwise it generates, persists the brief
+ * under its slug, caches the request → slug mapping, and returns the brief.
  *
- * `generate` is injectable so the model boundary can be mocked in tests; Vercel only
- * ever invokes the handler with `(req, res)`.
+ * Outcomes map to status codes: 405 for non-POST, 400 for a missing/blank title,
+ * 502 when generation fails. Concurrent identical requests may both generate once
+ * (stampede) — accepted under the no-abuse assumption (spec 0002, Open questions).
+ *
+ * `generate` and `client` are injectable so the model and KV boundaries can be
+ * mocked in tests; Vercel only ever invokes the handler with `(req, res)`.
  */
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse,
-  generate: GenerateBrief = generateBrief
+  generate: GenerateBrief = generateBrief,
+  client?: KVClient
 ): Promise<void> {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -52,8 +62,21 @@ export default async function handler(
   const rawAuthor = body?.["author"];
   const author = typeof rawAuthor === "string" && rawAuthor.trim() !== "" ? rawAuthor : undefined;
 
+  // Dedup: a cached request returns its stored brief without paying the model.
+  // A dangling cache entry (slug with no brief) falls through to regeneration.
+  const cachedSlug = await getCachedSlug(title, author, client);
+  if (cachedSlug) {
+    const cached = await getBrief(cachedSlug, client);
+    if (cached) {
+      res.status(200).json(cached);
+      return;
+    }
+  }
+
   try {
     const brief = await generate(title, author);
+    await saveBrief(brief, client);
+    await setCachedSlug(title, author, brief.slug, client);
     res.status(200).json(brief);
   } catch (error) {
     logger.error(

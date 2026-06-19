@@ -3,16 +3,48 @@ import assert from "node:assert";
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+import type { KVClient } from "../lib/kv";
+
 // handler -> ../lib/generate -> anthropic.ts -> env.ts reads ANTHROPIC_API_KEY at
 // import time. Set it, then import dynamically so the assignment runs before the
 // module graph loads (static imports are hoisted above it).
 process.env.ANTHROPIC_API_KEY ||= "test-key";
 const { default: handler } = await import("./generate");
 const { BriefGenerationError } = await import("../lib/generate");
+const { keys } = await import("../lib/kv");
+const { cacheKey } = await import("../lib/cache");
 
 /** A minimal well-formed brief; the handler treats it as an opaque pass-through. */
 function validBrief() {
   return { slug: "atomic-habits", title: "Atomic Habits", author: "James Clear" };
+}
+
+/**
+ * In-memory stand-in for the slice of `@vercel/kv` the store and cache use, so the
+ * handler's persistence + dedup paths run with no live connection. Mirrors the fakes
+ * in `lib/kv.test.ts`; the handler defaults to the real client, tests inject this.
+ */
+function fakeClient(): KVClient {
+  const store = new Map<string, unknown>();
+  const sets = new Map<string, Set<string>>();
+  return {
+    async get<T>(key: string): Promise<T | null> {
+      return store.has(key) ? (store.get(key) as T) : null;
+    },
+    async set(key: string, value: unknown): Promise<unknown> {
+      store.set(key, value);
+      return "OK";
+    },
+    async sadd(key: string, ...members: string[]): Promise<unknown> {
+      const existing = sets.get(key) ?? new Set<string>();
+      members.forEach((m) => existing.add(m));
+      sets.set(key, existing);
+      return members.length;
+    },
+    async smembers(key: string): Promise<string[]> {
+      return [...(sets.get(key) ?? new Set<string>())];
+    },
+  };
 }
 
 /** Records what the handler wrote, so assertions can read status/body/headers back. */
@@ -53,7 +85,8 @@ test("POST /api/generate returns 200 with a Brief for a valid body", async () =>
   await handler(
     req("POST", { title: "Atomic Habits", author: "James Clear" }),
     res as unknown as VercelResponse,
-    generate
+    generate,
+    fakeClient()
   );
 
   assert.strictEqual(res.statusCode, 200);
@@ -68,7 +101,12 @@ test("POST /api/generate accepts a body with no author", async () => {
   };
   const res = fakeRes();
 
-  await handler(req("POST", { title: "Sapiens" }), res as unknown as VercelResponse, generate);
+  await handler(
+    req("POST", { title: "Sapiens" }),
+    res as unknown as VercelResponse,
+    generate,
+    fakeClient()
+  );
 
   assert.strictEqual(res.statusCode, 200);
 });
@@ -81,7 +119,8 @@ test("POST /api/generate parses a string body and returns 200", async () => {
   await handler(
     req("POST", JSON.stringify({ title: "Atomic Habits" })),
     res as unknown as VercelResponse,
-    generate
+    generate,
+    fakeClient()
   );
 
   assert.strictEqual(res.statusCode, 200);
@@ -143,7 +182,8 @@ test("POST /api/generate returns 502 when generation fails", async () => {
   await handler(
     req("POST", { title: "Atomic Habits" }),
     res as unknown as VercelResponse,
-    generate
+    generate,
+    fakeClient()
   );
 
   assert.strictEqual(res.statusCode, 502);
@@ -158,8 +198,84 @@ test("POST /api/generate returns 502 when generation throws an unexpected error"
   await handler(
     req("POST", { title: "Atomic Habits" }),
     res as unknown as VercelResponse,
-    generate
+    generate,
+    fakeClient()
   );
 
   assert.strictEqual(res.statusCode, 502);
+});
+
+test("POST /api/generate persists the generated brief and returns its slug", async () => {
+  const brief = validBrief();
+  const generate = async () => brief as never;
+  const client = fakeClient();
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Atomic Habits", author: "James Clear" }),
+    res as unknown as VercelResponse,
+    generate,
+    client
+  );
+
+  assert.strictEqual(res.statusCode, 200);
+  assert.deepStrictEqual(res.body, brief);
+  // The brief is addressable by its slug, and the request is cached to that slug.
+  assert.deepStrictEqual(await client.get(keys.brief(brief.slug)), brief);
+  assert.strictEqual(await client.get(keys.cache(cacheKey("Atomic Habits", "James Clear"))), brief.slug);
+});
+
+test("POST /api/generate returns the cached brief on a repeat without calling the model", async () => {
+  const brief = validBrief();
+  let calls = 0;
+  const generate = async () => {
+    calls += 1;
+    return brief as never;
+  };
+  const client = fakeClient();
+
+  // First request generates and persists.
+  await handler(
+    req("POST", { title: "Atomic Habits", author: "James Clear" }),
+    fakeRes() as unknown as VercelResponse,
+    generate,
+    client
+  );
+
+  // A repeat with different casing/spacing must hit the cache, not the model.
+  const res = fakeRes();
+  await handler(
+    req("POST", { title: "  ATOMIC   HABITS ", author: "james clear" }),
+    res as unknown as VercelResponse,
+    generate,
+    client
+  );
+
+  assert.strictEqual(calls, 1, "the model should run only for the first request");
+  assert.strictEqual(res.statusCode, 200);
+  assert.deepStrictEqual(res.body, brief);
+});
+
+test("POST /api/generate regenerates when a cached slug no longer resolves to a brief", async () => {
+  const brief = validBrief();
+  let calls = 0;
+  const generate = async () => {
+    calls += 1;
+    return brief as never;
+  };
+  const client = fakeClient();
+  // Cache points at a slug whose brief was never stored (a dangling entry).
+  await client.set(keys.cache(cacheKey("Atomic Habits", "James Clear")), "atomic-habits");
+
+  const res = fakeRes();
+  await handler(
+    req("POST", { title: "Atomic Habits", author: "James Clear" }),
+    res as unknown as VercelResponse,
+    generate,
+    client
+  );
+
+  assert.strictEqual(calls, 1, "a dangling cache entry must fall through to generation");
+  assert.strictEqual(res.statusCode, 200);
+  assert.deepStrictEqual(await client.get(keys.brief(brief.slug)), brief);
 });
