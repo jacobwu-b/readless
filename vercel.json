@@ -2,6 +2,9 @@
   "functions": {
     "api/**/*.ts": {
       "maxDuration": 60
+    },
+    "api/generate.ts": {
+      "maxDuration": 300
     }
   },
   "env": [
