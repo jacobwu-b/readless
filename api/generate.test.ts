@@ -272,7 +272,8 @@ test("POST /api/generate regenerates when a cached slug no longer resolves to a 
     req("POST", { title: "Atomic Habits", author: "James Clear" }),
     res as unknown as VercelResponse,
     generate,
-    client
+    client,
+    [] // isolate from the committed seed catalog: the slug must be a true KV miss
   );
 
   assert.strictEqual(calls, 1, "a dangling cache entry must fall through to generation");

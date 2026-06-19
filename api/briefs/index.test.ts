@@ -100,7 +100,7 @@ test("GET /api/briefs returns the index entry list of stored briefs", async () =
   await saveBrief(makeBrief({ slug: "sapiens", title: "Sapiens" }), client);
   const res = fakeRes();
 
-  await handler(req("GET"), res as unknown as VercelResponse, client);
+  await handler(req("GET"), res as unknown as VercelResponse, client, []);
 
   assert.strictEqual(res.statusCode, 200);
   const body = res.body as Array<{ slug: string }>;
@@ -115,7 +115,7 @@ test("GET /api/briefs returns lightweight entries without editorial sections", a
   await saveBrief(makeBrief(), client);
   const res = fakeRes();
 
-  await handler(req("GET"), res as unknown as VercelResponse, client);
+  await handler(req("GET"), res as unknown as VercelResponse, client, []);
 
   const [entry] = res.body as Array<Record<string, unknown>>;
   assert.deepStrictEqual(Object.keys(entry ?? {}).sort(), [
@@ -134,7 +134,7 @@ test("GET /api/briefs returns lightweight entries without editorial sections", a
 test("GET /api/briefs returns an empty list when no briefs are stored", async () => {
   const res = fakeRes();
 
-  await handler(req("GET"), res as unknown as VercelResponse, fakeClient());
+  await handler(req("GET"), res as unknown as VercelResponse, fakeClient(), []);
 
   assert.strictEqual(res.statusCode, 200);
   assert.deepStrictEqual(res.body, []);
