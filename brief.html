@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brief · ReadLess</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/brief.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="site-name">ReadLess</a>
+      <a href="/" class="back">← All books</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="brief-loading" id="loading">Loading brief…</div>
+    <article id="brief"></article>
+  </main>
+
+  <script src="/assets/brief.js"></script>
+  <script>
+    var loadingEl = document.getElementById('loading');
+    var briefEl = document.getElementById('brief');
+
+    function showNotFound() {
+      loadingEl.hidden = true;
+      document.title = 'Brief not found · ReadLess';
+      briefEl.innerHTML =
+        '<div class="brief-missing">' +
+        '<h1>Brief not found</h1>' +
+        '<p>We couldn’t find a brief for that link. <a href="/">Browse all books</a> or ' +
+        '<a href="/generate.html">generate a new one</a>.</p>' +
+        '</div>';
+    }
+
+    async function load() {
+      var slug = new URLSearchParams(location.search).get('slug');
+      if (!slug || !slug.trim()) {
+        showNotFound();
+        return;
+      }
+
+      try {
+        var res = await fetch('/api/briefs/' + encodeURIComponent(slug.trim()));
+        if (!res.ok) {
+          showNotFound();
+          return;
+        }
+        var brief = await res.json();
+        loadingEl.hidden = true;
+        document.title = brief.title + ' · ReadLess';
+        briefEl.innerHTML = window.renderBrief(brief);
+      } catch (err) {
+        showNotFound();
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
