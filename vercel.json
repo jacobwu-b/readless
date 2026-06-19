@@ -7,6 +7,12 @@
       "maxDuration": 300
     }
   },
+  "rewrites": [
+    {
+      "source": "/books/:slug/:rest*",
+      "destination": "/brief.html?slug=:slug"
+    }
+  ],
   "env": [
     "NODE_ENV",
     "ANTHROPIC_API_KEY",
