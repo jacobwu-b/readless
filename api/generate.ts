@@ -37,14 +37,16 @@ function parseBody(body: unknown): Record<string, unknown> | undefined {
  * 502 when generation fails. Concurrent identical requests may both generate once
  * (stampede) — accepted under the no-abuse assumption (spec 0002, Open questions).
  *
- * `generate` and `client` are injectable so the model and KV boundaries can be
- * mocked in tests; Vercel only ever invokes the handler with `(req, res)`.
+ * `generate`, `client`, and `seeds` are injectable so the model and both store
+ * boundaries can be mocked in tests; Vercel only ever invokes the handler with
+ * `(req, res)`, leaving the seed catalog to default to the committed seeds.
  */
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse,
   generate: GenerateBrief = generateBrief,
-  client?: KVClient
+  client?: KVClient,
+  seeds?: Brief[]
 ): Promise<void> {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -66,7 +68,7 @@ export default async function handler(
   // A dangling cache entry (slug with no brief) falls through to regeneration.
   const cachedSlug = await getCachedSlug(title, author, client);
   if (cachedSlug) {
-    const cached = await getBrief(cachedSlug, client);
+    const cached = await getBrief(cachedSlug, client, seeds);
     if (cached) {
       res.status(200).json(cached);
       return;
