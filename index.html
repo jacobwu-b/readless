@@ -381,9 +381,28 @@
     let allBooks = [];
     let activeFilter = 'all';
 
+    // Brief index entries come from the API (KV + seeds) and are partly
+    // LLM/user-sourced, so every interpolated value is escaped before it
+    // reaches innerHTML — matching assets/brief.js.
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     async function init() {
-      const res = await fetch('./books-index.json');
-      allBooks = await res.json();
+      try {
+        const res = await fetch('/api/briefs');
+        if (!res.ok) throw new Error(`Request failed (${res.status})`);
+        allBooks = await res.json();
+      } catch (err) {
+        document.getElementById('grid').innerHTML =
+          `<div class="empty"><p>Couldn’t load the library. Please refresh.</p></div>`;
+        return;
+      }
 
       // Build category filters
       const categories = [...new Set(allBooks.map(b => b.category))].sort();
@@ -445,24 +464,29 @@
       books.forEach(book => {
         const card = document.createElement('a');
         card.className = 'card';
-        card.href = `./books/${book.slug}/`;
+        card.href = `brief.html?slug=${encodeURIComponent(book.slug)}`;
 
+        const initial = escapeHtml((book.title[0] || '?').toUpperCase());
+        // For the inline onerror fallback the placeholder is embedded in a JS
+        // string inside a double-quoted attribute, so it uses single-quoted
+        // attributes (escaped for the JS string) and never a raw double quote.
+        const onErrorPlaceholder = `<div class='card-cover-placeholder'><span>${initial}</span></div>`.replace(/'/g, "\\'");
         const coverHTML = book.cover
-          ? `<img class="card-cover" src="${book.cover}" alt="${book.title}" loading="lazy" onerror="this.outerHTML='<div class=\'card-cover-placeholder\'><span>${book.title[0]}</span></div>'">`
-          : `<div class="card-cover-placeholder"><span>${book.title[0]}</span></div>`;
+          ? `<img class="card-cover" src="${escapeHtml(book.cover)}" alt="${escapeHtml(book.title)}" loading="lazy" onerror="this.outerHTML='${onErrorPlaceholder}'">`
+          : `<div class="card-cover-placeholder"><span>${initial}</span></div>`;
 
         const tagsHTML = book.tags.slice(0, 3).map(t =>
-          `<span class="card-tag">${t}</span>`
+          `<span class="card-tag">${escapeHtml(t)}</span>`
         ).join('');
 
         card.innerHTML = `
           ${coverHTML}
           <div class="card-body">
-            <div class="card-category">${book.category}</div>
-            <div class="card-title">${book.title}</div>
-            <div class="card-author">${book.author}, ${book.year}</div>
+            <div class="card-category">${escapeHtml(book.category)}</div>
+            <div class="card-title">${escapeHtml(book.title)}</div>
+            <div class="card-author">${escapeHtml(book.author)}, ${escapeHtml(book.year)}</div>
             <div class="card-tags">${tagsHTML}</div>
-            <div class="card-meta">${book.read_time} read · Added ${formatDate(book.date_added)}</div>
+            <div class="card-meta">${escapeHtml(book.readTime)} read · Added ${formatDate(book.dateAdded)}</div>
           </div>
         `;
 
