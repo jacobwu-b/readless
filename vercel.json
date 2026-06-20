@@ -1,10 +1,10 @@
 {
   "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 60
-    },
     "api/generate.ts": {
       "maxDuration": 300
+    },
+    "api/briefs/**/*.ts": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
