@@ -127,13 +127,34 @@ test("enforceRateLimit isolates counters across days so a new day resets the lim
   );
 });
 
-test("clientIp takes the first hop of a comma-separated X-Forwarded-For", () => {
-  const req = { headers: { "x-forwarded-for": "203.0.113.7, 70.41.3.18, 150.172.238.178" } };
+test("clientIp prefers x-vercel-forwarded-for, which a userland proxy cannot overwrite", () => {
+  // A proxy on top of Vercel can rewrite x-forwarded-for, but not the vercel-prefixed
+  // header the edge sets — so it wins when both are present.
+  const req = {
+    headers: {
+      "x-vercel-forwarded-for": "198.51.100.23",
+      "x-forwarded-for": "203.0.113.7",
+    },
+  };
+
+  assert.strictEqual(clientIp(req), "198.51.100.23");
+});
+
+test("clientIp takes the right-most hop so a client cannot steer its bucket by prepending hops", () => {
+  // The platform appends the real client IP as the right-most hop; values to its left are
+  // attacker-supplied and must be ignored, or per-IP throttling is bypassable.
+  const req = { headers: { "x-forwarded-for": "1.2.3.4, 5.6.7.8, 203.0.113.7" } };
 
   assert.strictEqual(clientIp(req), "203.0.113.7");
 });
 
-test("clientIp falls back to X-Real-IP when forwarded-for is absent", () => {
+test("clientIp falls back to x-forwarded-for when the vercel header is absent", () => {
+  const req = { headers: { "x-forwarded-for": "203.0.113.7" } };
+
+  assert.strictEqual(clientIp(req), "203.0.113.7");
+});
+
+test("clientIp falls back to X-Real-IP when no forwarded-for header is present", () => {
   const req = { headers: { "x-real-ip": "198.51.100.23" } };
 
   assert.strictEqual(clientIp(req), "198.51.100.23");
