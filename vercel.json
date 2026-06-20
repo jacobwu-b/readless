@@ -1,4 +1,5 @@
 {
+  "buildCommand": "",
   "functions": {
     "api/generate.ts": {
       "maxDuration": 300
