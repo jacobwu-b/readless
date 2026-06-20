@@ -20,7 +20,7 @@ import { slugify } from "./slug.js";
  *
  * `client` and `seeds` are injectable so tests can drive both boundaries in
  * memory. An omitted `client` forwards to the `lib/kv.ts` helpers' own default —
- * the real `@vercel/kv`-backed client — so the store never names the datastore.
+ * the real `@upstash/redis`-backed client — so the store never names the datastore.
  */
 
 /** The committed static seeds — curated briefs not (yet) written to KV. */
