@@ -7,7 +7,7 @@ import { keys, get, set, type KVClient } from "./kv.js";
  * into a `cache:{key}` lookup; the keyspace itself lives in `lib/kv.ts`.
  *
  * `client` is injectable so tests drive an in-memory store; an omitted client
- * forwards to the `lib/kv.ts` default — the real `@vercel/kv`-backed client.
+ * forwards to the `lib/kv.ts` default — the real `@upstash/redis`-backed client.
  */
 
 /** Lowercase, trim, and collapse internal whitespace runs to a single space. */

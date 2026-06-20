@@ -44,3 +44,13 @@ export function validateAnthropicConfig() {
 export function isKVConfigured(): boolean {
   return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 }
+
+/**
+ * The live Upstash Redis REST credentials, read at the config layer so `lib/kv.ts`
+ * can build its client without reading `process.env` itself (CLAUDE.md §6). Read live
+ * to track the current environment, mirroring `isKVConfigured`. Both fields are only
+ * present when `isKVConfigured()` is true — the only time `lib/kv.ts` builds the client.
+ */
+export function kvCredentials(): { url?: string; token?: string } {
+  return { url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN };
+}

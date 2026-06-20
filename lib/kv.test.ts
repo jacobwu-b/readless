@@ -132,9 +132,11 @@ test("real-client helpers degrade to an empty, write-dropping store when KV is u
     delete process.env.KV_REST_API_TOKEN;
 
     // No injected client → the real-client path. With KV unconfigured (issue #49,
-    // ADR-0007) every helper short-circuits before touching @vercel/kv: reads come
+    // ADR-0007) every helper short-circuits before touching @upstash/redis: reads come
     // back empty, writes are dropped silently, and counters report 0 so callers treat
     // requests as under-limit. The product runs on its static seeds instead of failing.
+    // This also guards lazy construction (ADR-0008): eager `new Redis(...)` would throw
+    // on these unconfigured calls, so their resolving proves the client is never built.
     assert.strictEqual(await get(keys.brief("atomic-habits")), null);
     assert.deepStrictEqual(await listIndex(), {});
     assert.deepStrictEqual(await indexSlugs(), []);
@@ -152,9 +154,9 @@ test("real-client helpers degrade to an empty, write-dropping store when KV is u
 
 /**
  * Guard for the CLAUDE.md §6 invariant: `lib/kv.ts` is the sole importer of
- * `@vercel/kv`. No `api/` handler may reach the datastore directly.
+ * `@upstash/redis`. No `api/` handler may reach the datastore directly.
  */
-test("no api/ handler imports @vercel/kv directly", () => {
+test("no api/ handler imports @upstash/redis directly", () => {
   const apiDir = join(dirname(fileURLToPath(import.meta.url)), "..", "api");
 
   function tsFiles(dir: string): string[] {
@@ -166,12 +168,12 @@ test("no api/ handler imports @vercel/kv directly", () => {
   }
 
   const offenders = tsFiles(apiDir).filter((file) =>
-    /["']@vercel\/kv["']/.test(readFileSync(file, "utf8"))
+    /["']@upstash\/redis["']/.test(readFileSync(file, "utf8"))
   );
 
   assert.deepStrictEqual(
     offenders,
     [],
-    `api/ handlers must reach KV through lib/kv.ts, not @vercel/kv directly: ${offenders.join(", ")}`
+    `api/ handlers must reach KV through lib/kv.ts, not @upstash/redis directly: ${offenders.join(", ")}`
   );
 });
