@@ -100,17 +100,21 @@ test("enforceRateLimit expires the counter so the daily window resets", async ()
   assert.strictEqual(ipTtl, 12 * 60 * 60);
 });
 
-test("enforceRateLimit does not re-arm the TTL on later hits in the same window", async () => {
+test("enforceRateLimit re-arms the TTL on every hit so an incr without expire cannot leak a TTL-less key", async () => {
+  // A crash between incr and a first-hit-only expire would leave a counter with no
+  // TTL, leaking a stale date-stamped key (issue #22(c)). Arming the TTL on every
+  // hit closes that race; it is idempotent since the key always expires at the same
+  // UTC midnight regardless of which hit set it.
   const { client, ttls } = fakeCounters();
   const opts = { client, now: NOON, ipPerDay: 20, globalPerDay: 100 };
   const ipKey = keys.rlIp("203.0.113.7", "2026-06-19");
 
   await enforceRateLimit("203.0.113.7", opts);
-  ttls.delete(ipKey); // a real EXPIRE on the first hit already armed it; later hits must not re-set it
+  ttls.delete(ipKey); // prove the *next* hit re-arms it, not just the first
 
   await enforceRateLimit("203.0.113.7", opts);
 
-  assert.strictEqual(ttls.has(ipKey), false, "TTL is only armed on the first increment of a window");
+  assert.strictEqual(ttls.get(ipKey), 12 * 60 * 60, "every hit re-arms the TTL to the seconds left in the UTC day");
 });
 
 test("enforceRateLimit isolates counters across days so a new day resets the limit", async () => {

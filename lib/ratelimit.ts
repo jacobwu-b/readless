@@ -7,7 +7,7 @@ import { keys, incr, expire, type CounterClient } from "./kv";
  * Both limits are fixed-window counters keyed per UTC day on KV: a per-IP counter
  * throttles a single client, and a global counter is the real spend backstop — once
  * it reaches the configured ceiling, generation is hard-blocked for the rest of the
- * day. Each counter is `incr`'d per request and given a TTL on the first hit so the
+ * day. Each counter is `incr`'d per request and re-armed with a TTL on every hit so the
  * window self-expires; the date-stamped key means a new day always starts fresh.
  *
  * Header-derived IPs are spoofable; defeating that is out of scope (spec 0005).
@@ -45,8 +45,14 @@ export interface EnforceOptions {
 }
 
 /**
- * Increment a daily-window counter, arming its TTL on the window's first hit, and
- * report whether the new count is still within `limit`.
+ * Increment a daily-window counter, re-arming its TTL on every hit, and report
+ * whether the new count is still within `limit`.
+ *
+ * The TTL is set unconditionally rather than only on the first hit: a crash between
+ * `incr` and a first-hit-only `expire` would otherwise leave the counter with no TTL,
+ * leaking a stale date-stamped key. Re-arming is idempotent — the key always expires
+ * at the same UTC midnight (`ttl` is the seconds remaining to it), so a later hit's
+ * smaller `ttl` lands on the same instant.
  */
 async function hitDailyCounter(
   key: string,
@@ -55,9 +61,7 @@ async function hitDailyCounter(
   client: CounterClient | undefined
 ): Promise<boolean> {
   const count = await incr(key, client);
-  if (count === 1) {
-    await expire(key, ttl, client);
-  }
+  await expire(key, ttl, client);
   return count <= limit;
 }
 

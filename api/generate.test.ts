@@ -391,6 +391,43 @@ test("POST /api/generate regenerates when a cached slug no longer resolves to a 
   assert.deepStrictEqual(await client.get(keys.brief(brief.slug)), brief);
 });
 
+test("POST /api/generate serves a cache hit even when the global cap is reached", async () => {
+  // The dedup cache must be consulted before the spend cap: a repeat returns a
+  // stored brief at zero model cost, so it must not be blocked by — or count
+  // against — the global counter. This is the DoS guard from issue #22(a).
+  const brief = validBrief();
+  const client = fakeClient();
+  // Seed a stored brief and its cache entry, as a prior generation would have.
+  await client.set(keys.brief(brief.slug), brief);
+  await client.set(keys.cache(cacheKey("Atomic Habits", "James Clear")), brief.slug);
+  // Drive the global daily counter to its default ceiling.
+  const day = new Date().toISOString().slice(0, 10);
+  for (let i = 0; i < 100; i++) {
+    await client.incr(keys.rlGlobal(day));
+  }
+
+  let called = false;
+  const generate = async () => {
+    called = true;
+    return brief as never;
+  };
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Atomic Habits", author: "James Clear" }),
+    res as unknown as VercelResponse,
+    generate,
+    client,
+    [] // isolate from the committed seeds, which already include "atomic-habits"
+  );
+
+  assert.strictEqual(res.statusCode, 200, "a cache hit is served even at the cap");
+  assert.deepStrictEqual(res.body, brief);
+  assert.strictEqual(called, false, "a cache hit must not call the model");
+  // The cap counter is unchanged by the cache hit: the next incr returns 101, not 102.
+  assert.strictEqual(await client.incr(keys.rlGlobal(day)), 101, "a cache hit must not burn a cap slot");
+});
+
 test("POST /api/generate returns 429 with Retry-After once the global cap is reached", async () => {
   const client = fakeClient();
   // Pre-fill the global daily counter to its default ceiling so the next request blocks.
