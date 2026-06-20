@@ -8,9 +8,7 @@
     "dev": "vercel dev",
     "build": "vercel build",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test \"**/*.test.ts\"",
-    "migrate": "tsx scripts/migrate-briefs.ts",
-    "build:seeds": "tsx scripts/migrate-briefs.ts"
+    "test": "node --import tsx --test \"**/*.test.ts\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.2",

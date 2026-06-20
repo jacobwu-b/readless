@@ -39,7 +39,7 @@ npm run build               # vercel build
 
 `npm run dev` starts `vercel dev` on http://localhost:3000. Generating a brief makes real Anthropic API calls (and spends), so a valid `ANTHROPIC_API_KEY` is required; browsing the seeded gallery works without one. The rate-limit and dedup counters live in KV, so the generate flow needs the `KV_*` vars populated.
 
-To regenerate the seed catalog from the source briefs, run `npm run build:seeds`.
+The seed catalog ships committed in [`data/seeds.json`](./data/seeds.json); the one-shot migration that produced it has been retired.
 
 ## Environment
 
