@@ -167,6 +167,68 @@ test("POST /api/generate returns 400 for a non-string title", async () => {
   assert.strictEqual(res.statusCode, 400);
 });
 
+test("POST /api/generate returns 400 for a title longer than the bound", async () => {
+  let called = false;
+  const generate = async () => {
+    called = true;
+    return validBrief() as never;
+  };
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "x".repeat(201) }),
+    res as unknown as VercelResponse,
+    generate
+  );
+
+  assert.strictEqual(res.statusCode, 400);
+  assert.strictEqual(called, false, "an over-long title must not reach the model");
+});
+
+test("POST /api/generate returns 400 for an author longer than the bound", async () => {
+  const generate = async () => validBrief() as never;
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Atomic Habits", author: "A".repeat(121) }),
+    res as unknown as VercelResponse,
+    generate
+  );
+
+  assert.strictEqual(res.statusCode, 400);
+});
+
+test("POST /api/generate returns 400 for control characters in the title", async () => {
+  const generate = async () => validBrief() as never;
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Atomic" + String.fromCharCode(0) + "Habits" }),
+    res as unknown as VercelResponse,
+    generate
+  );
+
+  assert.strictEqual(res.statusCode, 400);
+});
+
+test("POST /api/generate returns 413 for an oversized body without calling the model", async () => {
+  let called = false;
+  const generate = async () => {
+    called = true;
+    return validBrief() as never;
+  };
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Atomic Habits", junk: "x".repeat(4096) }),
+    res as unknown as VercelResponse,
+    generate
+  );
+
+  assert.strictEqual(res.statusCode, 413);
+  assert.strictEqual(called, false, "an oversized body must not reach the model");
+});
+
 test("POST /api/generate returns 405 for a non-POST method", async () => {
   let called = false;
   const generate = async () => {
