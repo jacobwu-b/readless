@@ -4,7 +4,8 @@ name: Dependabot auto-merge
 # the grouped dev/prod batches in dependabot.yml). Auto-merge waits for the
 # required status checks, so the test gate is never bypassed — only the human
 # review click is, and only via the Dependabot bypass on main's ruleset
-# (see repo-settings.md → "Branch protection — main").
+# (see repo-settings.md → "Branch protection — main"). This is intentional
+# policy, not drift — see docs/decisions/0006-dependabot-auto-merge.md.
 #
 # Major bumps are never auto-merged: they are labeled `dependencies:major` and
 # left open for the monthly reconciliation (see dependabot-reconciliation.yml).
