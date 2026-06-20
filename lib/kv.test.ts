@@ -11,7 +11,6 @@ import {
   addToIndex,
   listIndex,
   indexSlugs,
-  legacyIndexSlugs,
   type KVClient,
 } from "./kv";
 
@@ -19,20 +18,17 @@ import {
  * An in-memory stand-in for the slice of `@vercel/kv` these helpers use. Lets the
  * round-trip and index tests run with no live KV connection — the helpers default
  * to the real client, tests inject this. The internal maps are exposed so a test
- * can seed legacy state (the retired `briefs:index` set) the migration reads.
+ * can inspect the stored briefs and gallery hash directly.
  */
 function fakeClient(): KVClient & {
   store: Map<string, unknown>;
   hashes: Map<string, Map<string, unknown>>;
-  sets: Map<string, Set<string>>;
 } {
   const store = new Map<string, unknown>();
   const hashes = new Map<string, Map<string, unknown>>();
-  const sets = new Map<string, Set<string>>();
   return {
     store,
     hashes,
-    sets,
     async get<T>(key: string): Promise<T | null> {
       return store.has(key) ? (store.get(key) as T) : null;
     },
@@ -53,16 +49,12 @@ function fakeClient(): KVClient & {
     async hkeys(key: string): Promise<string[]> {
       return [...(hashes.get(key)?.keys() ?? [])];
     },
-    async smembers(key: string): Promise<string[]> {
-      return [...(sets.get(key) ?? new Set<string>())];
-    },
   };
 }
 
 test("keys builds the keyspace owned by lib/kv (ADR-0002, ADR-0005)", () => {
   assert.strictEqual(keys.brief("atomic-habits"), "brief:atomic-habits");
   assert.strictEqual(keys.gallery, "briefs:gallery");
-  assert.strictEqual(keys.index, "briefs:index");
   assert.strictEqual(keys.cache("atomic habits|james clear"), "cache:atomic habits|james clear");
 });
 
@@ -128,13 +120,6 @@ test("indexSlugs returns an empty array when the gallery index is unset", async 
   const client = fakeClient();
 
   assert.deepStrictEqual(await indexSlugs(client), []);
-});
-
-test("legacyIndexSlugs reads the retired briefs:index set for the migration", async () => {
-  const client = fakeClient();
-  client.sets.set(keys.index, new Set(["atomic-habits", "deep-work"]));
-
-  assert.deepStrictEqual((await legacyIndexSlugs(client)).sort(), ["atomic-habits", "deep-work"]);
 });
 
 test("a helper using the real client fails fast with a clear error when KV is unconfigured", async () => {

@@ -28,9 +28,6 @@ function fakeClient(): KVClient {
     async hkeys(): Promise<string[]> {
       return [];
     },
-    async smembers(): Promise<string[]> {
-      return [];
-    },
   };
 }
 

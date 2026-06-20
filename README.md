@@ -16,7 +16,7 @@ ReadLess is a static frontend (HTML/CSS/vanilla JS) over a handful of Vercel Fun
 4. Dedups: a normalized `(title|author)` that was generated before returns the stored brief without calling the model.
 5. Otherwise generates the brief, persists it under its slug, caches the request → slug mapping, and returns it (502 if generation fails).
 
-The KV keyspace is owned solely by `lib/kv.ts`: `brief:{slug}`, the `briefs:index` set, `cache:{key}` dedup entries, and the `rl:*` rate-limit counters.
+The KV keyspace is owned solely by `lib/kv.ts`: `brief:{slug}`, the `briefs:gallery` projection hash, `cache:{key}` dedup entries, and the `rl:*` rate-limit counters.
 
 ## Quick start
 

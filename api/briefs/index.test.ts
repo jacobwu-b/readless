@@ -38,9 +38,6 @@ function fakeClient(): KVClient {
     async hkeys(key: string): Promise<string[]> {
       return [...(hashes.get(key)?.keys() ?? [])];
     },
-    async smembers(): Promise<string[]> {
-      return [];
-    },
   };
 }
 

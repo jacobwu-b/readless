@@ -7,7 +7,6 @@ import { kv } from "@vercel/kv";
  *
  * - `brief:{slug}`        → the full serialized Brief JSON
  * - `briefs:gallery`      → a hash of slug → IndexEntry JSON, the gallery's one-read source (ADR-0005)
- * - `briefs:index`        → legacy slug set, retired by ADR-0005; read only by the migration backfill
  * - `cache:{key}`         → slug, mapping a normalized (title|author) request for dedup
  * - `rl:ip:{ip}:{day}`    → per-IP daily request counter (TTL'd, ADR-0003)
  * - `rl:global:{day}`     → global daily request counter, the spend backstop (ADR-0003)
@@ -15,7 +14,6 @@ import { kv } from "@vercel/kv";
 export const keys = {
   brief: (slug: string) => `brief:${slug}`,
   gallery: "briefs:gallery",
-  index: "briefs:index",
   cache: (key: string) => `cache:${key}`,
   rlIp: (ip: string, day: string) => `rl:ip:${ip}:${day}`,
   rlGlobal: (day: string) => `rl:global:${day}`,
@@ -32,8 +30,6 @@ export interface KVClient {
   hset(key: string, value: Record<string, unknown>): Promise<unknown>;
   hgetall(key: string): Promise<Record<string, unknown> | null>;
   hkeys(key: string): Promise<string[]>;
-  // Retired by ADR-0005 — kept only so the gallery-index migration can read the legacy set.
-  smembers(key: string): Promise<string[]>;
 }
 
 /**
@@ -115,15 +111,6 @@ export async function listIndex<T>(client: KVClient = defaultClient): Promise<Re
 export async function indexSlugs(client: KVClient = defaultClient): Promise<string[]> {
   await ensureKVConfig(client);
   return client.hkeys(keys.gallery);
-}
-
-/**
- * Read the retired `briefs:index` slug set. Transitional: used only by the
- * gallery-index backfill (ADR-0005) and removed with the follow-up cleanup.
- */
-export async function legacyIndexSlugs(client: KVClient = defaultClient): Promise<string[]> {
-  await ensureKVConfig(client);
-  return client.smembers(keys.index);
 }
 
 /** Atomically increment a counter, returning its new value. Creates it at 1 if absent. */
