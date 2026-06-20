@@ -2,6 +2,7 @@ import seedData from "../data/seeds.json" with { type: "json" };
 
 import { keys, get, set, addToIndex, list, type KVClient } from "./kv";
 import type { Brief } from "./schema";
+import { slugify } from "./slug";
 
 /**
  * The brief store: save/get/list built on the `lib/kv.ts` keyspace (ADR-0002),
@@ -49,6 +50,28 @@ function toIndexEntry(brief: Brief): IndexEntry {
 export async function saveBrief(brief: Brief, client?: KVClient): Promise<void> {
   await set(keys.brief(brief.slug), brief, client);
   await addToIndex(brief.slug, client);
+}
+
+/**
+ * Persist a freshly generated brief under a server-owned, collision-free slug.
+ *
+ * The model's `slug` is a hint we discard: the slug is the brief's load-bearing
+ * public address (`brief:{slug}`, `/{slug}`), so the store derives it from the
+ * title and disambiguates against every slug already taken — the KV index ∪ the
+ * static seeds — via `slugify`. This guarantees a new generation can never
+ * overwrite an existing brief or shadow a curated seed; a colliding title gets the
+ * next free `-{n}` suffix instead. Returns the stored brief with its final slug so
+ * the caller can address and cache it.
+ */
+export async function createBrief(
+  brief: Brief,
+  client?: KVClient,
+  seeds: Brief[] = defaultSeeds
+): Promise<Brief> {
+  const taken = new Set([...(await list(client)), ...seeds.map((seed) => seed.slug)]);
+  const stored: Brief = { ...brief, slug: slugify(brief.title, taken) };
+  await saveBrief(stored, client);
+  return stored;
 }
 
 /**

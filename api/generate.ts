@@ -6,7 +6,7 @@ import type { CounterClient, KVClient } from "../lib/kv";
 import { logger } from "../lib/logger";
 import { clientIp, enforceRateLimit } from "../lib/ratelimit";
 import type { Brief } from "../lib/schema";
-import { getBrief, saveBrief } from "../lib/store";
+import { getBrief, createBrief } from "../lib/store";
 import { bodyTooLarge, validateGenerateInput } from "../lib/validate";
 
 /** The boundary `handler` calls. Injectable so tests mock generation cleanly. */
@@ -98,9 +98,11 @@ export default async function handler(
 
   try {
     const brief = await generate(title, author);
-    await saveBrief(brief, client);
-    await setCachedSlug(title, author, brief.slug, client);
-    res.status(200).json(brief);
+    // The store owns the slug: it derives a collision-free one and may suffix it,
+    // so cache and respond with the persisted brief, not the model's raw output.
+    const stored = await createBrief(brief, client, seeds);
+    await setCachedSlug(title, author, stored.slug, client);
+    res.status(200).json(stored);
   } catch (error) {
     logger.error(
       "brief generation failed",

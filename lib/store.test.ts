@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { saveBrief, getBrief, listBriefs } from "./store";
+import { saveBrief, createBrief, getBrief, listBriefs } from "./store";
 import { keys, type KVClient } from "./kv";
 import type { Brief } from "./schema";
 
@@ -85,6 +85,54 @@ test("saveBrief registers the slug so listBriefs surfaces it", async () => {
     entries.map((e) => e.slug),
     ["deep-work"]
   );
+});
+
+test("createBrief stores under the base slug and returns it when the slug is free", async () => {
+  const client = fakeClient();
+  const brief = makeBrief({ slug: "deep-work", title: "Deep Work" });
+
+  const stored = await createBrief(brief, client, []);
+
+  assert.strictEqual(stored.slug, "deep-work");
+  assert.deepStrictEqual(await getBrief("deep-work", client, []), brief);
+});
+
+test("createBrief derives the slug from the title, ignoring the model-provided slug", async () => {
+  const client = fakeClient();
+  // A model that tried to seize an arbitrary key must not control where we persist.
+  const brief = makeBrief({ slug: "../evil-overwrite", title: "Atomic Habits" });
+
+  const stored = await createBrief(brief, client, []);
+
+  assert.strictEqual(stored.slug, "atomic-habits");
+  assert.strictEqual(await getBrief("../evil-overwrite", client, []), null);
+});
+
+test("createBrief disambiguates a title that collides with an existing stored brief", async () => {
+  const client = fakeClient();
+  // Two distinct books share a title ("The Power"): Naomi Alderman's and Robert Greene's.
+  const alderman = makeBrief({ slug: "the-power", title: "The Power", author: "Naomi Alderman" });
+  await createBrief(alderman, client, []);
+
+  const greene = makeBrief({ slug: "the-power", title: "The Power", author: "Robert Greene" });
+  const stored = await createBrief(greene, client, []);
+
+  assert.strictEqual(stored.slug, "the-power-2");
+  // The first book is untouched; both are independently addressable.
+  assert.strictEqual((await getBrief("the-power", client, []))?.author, "Naomi Alderman");
+  assert.strictEqual((await getBrief("the-power-2", client, []))?.author, "Robert Greene");
+});
+
+test("createBrief does not overwrite a curated seed sharing the title", async () => {
+  const client = fakeClient();
+  const seed = makeBrief({ slug: "sapiens", title: "Sapiens", author: "Yuval Noah Harari" });
+  const generated = makeBrief({ slug: "sapiens", title: "Sapiens", author: "Impostor" });
+
+  const stored = await createBrief(generated, client, [seed]);
+
+  assert.strictEqual(stored.slug, "sapiens-2");
+  // The curated seed still resolves under its own slug.
+  assert.strictEqual((await getBrief("sapiens", client, [seed]))?.author, "Yuval Noah Harari");
 });
 
 test("getBrief falls back to a static seed when KV has no entry", async () => {
