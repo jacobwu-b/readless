@@ -95,7 +95,8 @@ test("POST /api/generate returns 200 with a Brief for a valid body", async () =>
     req("POST", { title: "Atomic Habits", author: "James Clear" }),
     res as unknown as VercelResponse,
     generate,
-    fakeClient()
+    fakeClient(),
+    [] // isolate from the committed seeds, which already include "atomic-habits"
   );
 
   assert.strictEqual(res.statusCode, 200);
@@ -286,7 +287,8 @@ test("POST /api/generate persists the generated brief and returns its slug", asy
     req("POST", { title: "Atomic Habits", author: "James Clear" }),
     res as unknown as VercelResponse,
     generate,
-    client
+    client,
+    [] // isolate from the committed seeds, which already include "atomic-habits"
   );
 
   assert.strictEqual(res.statusCode, 200);
@@ -294,6 +296,41 @@ test("POST /api/generate persists the generated brief and returns its slug", asy
   // The brief is addressable by its slug, and the request is cached to that slug.
   assert.deepStrictEqual(await client.get(keys.brief(brief.slug)), brief);
   assert.strictEqual(await client.get(keys.cache(cacheKey("Atomic Habits", "James Clear"))), brief.slug);
+});
+
+test("POST /api/generate gives two same-title books distinct slugs without overwriting", async () => {
+  // Two distinct books share a title ("The Power"); the model returns the same slug
+  // for both. The server must disambiguate so the first is not clobbered.
+  const alderman = { slug: "the-power", title: "The Power", author: "Naomi Alderman" };
+  const greene = { slug: "the-power", title: "The Power", author: "Robert Greene" };
+  const generate = async (_title: string, author?: string) =>
+    (author === "Robert Greene" ? greene : alderman) as never;
+  const client = fakeClient();
+
+  await handler(
+    req("POST", { title: "The Power", author: "Naomi Alderman" }),
+    fakeRes() as unknown as VercelResponse,
+    generate,
+    client,
+    []
+  );
+  const res = fakeRes();
+  await handler(
+    req("POST", { title: "The Power", author: "Robert Greene" }),
+    res as unknown as VercelResponse,
+    generate,
+    client,
+    []
+  );
+
+  assert.strictEqual(res.statusCode, 200);
+  assert.strictEqual((res.body as { slug: string }).slug, "the-power-2");
+  // Both books are independently addressable; the first was not overwritten.
+  assert.deepStrictEqual(await client.get(keys.brief("the-power")), alderman);
+  assert.deepStrictEqual(await client.get(keys.brief("the-power-2")), {
+    ...greene,
+    slug: "the-power-2",
+  });
 });
 
 test("POST /api/generate returns the cached brief on a repeat without calling the model", async () => {
@@ -310,7 +347,8 @@ test("POST /api/generate returns the cached brief on a repeat without calling th
     req("POST", { title: "Atomic Habits", author: "James Clear" }),
     fakeRes() as unknown as VercelResponse,
     generate,
-    client
+    client,
+    [] // isolate from the committed seeds, which already include "atomic-habits"
   );
 
   // A repeat with different casing/spacing must hit the cache, not the model.
@@ -319,7 +357,8 @@ test("POST /api/generate returns the cached brief on a repeat without calling th
     req("POST", { title: "  ATOMIC   HABITS ", author: "james clear" }),
     res as unknown as VercelResponse,
     generate,
-    client
+    client,
+    []
   );
 
   assert.strictEqual(calls, 1, "the model should run only for the first request");
