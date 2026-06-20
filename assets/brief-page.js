@@ -18,9 +18,26 @@ async function load() {
     showNotFound();
     return;
   }
+  slug = slug.trim();
+
+  // A just-generated brief may live only in sessionStorage when KV is unconfigured
+  // and nothing was persisted (issue #49). Render it directly before falling back to
+  // the API, which is the source of truth for seeded and persisted briefs.
+  try {
+    var cached = sessionStorage.getItem('brief:' + slug);
+    if (cached) {
+      var stashed = JSON.parse(cached);
+      loadingEl.hidden = true;
+      document.title = stashed.title + ' · ReadLess';
+      briefEl.innerHTML = window.renderBrief(stashed);
+      return;
+    }
+  } catch (e) {
+    // Corrupt or unavailable storage — fall through to the API fetch below.
+  }
 
   try {
-    var res = await fetch('/api/briefs/' + encodeURIComponent(slug.trim()));
+    var res = await fetch('/api/briefs/' + encodeURIComponent(slug));
     if (!res.ok) {
       showNotFound();
       return;

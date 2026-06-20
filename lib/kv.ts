@@ -1,5 +1,7 @@
 import { kv } from "@vercel/kv";
 
+import { isKVConfigured } from "./env";
+
 /**
  * The Vercel KV keyspace, owned solely by this module (ADR-0002, ADR-0005). KV has
  * no schema, so these keys *are* the schema and are load-bearing — every consumer
@@ -50,84 +52,84 @@ const defaultClient = kv as unknown as KVClient;
 // Same widening for the counter ops — `kv.incr`/`kv.expire` exist on the real client.
 const defaultCounterClient = kv as unknown as CounterClient;
 
-let kvConfigChecked = false;
-
 /**
- * Assert KV is configured before the first real-client operation, so a missing
- * `KV_REST_API_URL`/`KV_REST_API_TOKEN` fails fast with a clear message (issue #26)
- * instead of an opaque error deep in `@vercel/kv`. A no-op when a client is injected:
- * tests pass their own fake and never touch the real datastore, so the check — and the
- * `env.ts` import it pulls in — stays off the test path. Memoized: validated once per
- * process. `env.ts` is imported lazily so this module's importers don't eagerly trip
- * `env.ts`'s own required-var checks just by depending on the KV helpers.
+ * Whether a helper should skip the datastore entirely: the real `@vercel/kv` client is
+ * in use but KV is unconfigured (issue #49, ADR-0007). KV is optional — when it is absent
+ * reads return empty and writes are dropped, so the brief store falls back to its static
+ * seed catalog and generation still works (ephemerally) instead of the product failing to
+ * load. Always `false` for an injected client: tests drive their own fake and must reach it
+ * regardless of the ambient environment.
  */
-async function ensureKVConfig(client: object): Promise<void> {
-  if (kvConfigChecked) return;
-  if (client !== defaultClient && client !== defaultCounterClient) return;
-  const { validateKVConfig } = await import("./env");
-  validateKVConfig();
-  kvConfigChecked = true;
+function skipDatastore(client: object): boolean {
+  if (client !== defaultClient && client !== defaultCounterClient) return false;
+  return !isKVConfigured();
 }
 
-/** Read a JSON value by key. Returns `null` when the key is absent. */
+/** Read a JSON value by key. Returns `null` when the key is absent — or KV is unconfigured. */
 export async function get<T>(key: string, client: KVClient = defaultClient): Promise<T | null> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return null;
   return client.get<T>(key);
 }
 
-/** Write a JSON value by key, overwriting any existing value. */
+/** Write a JSON value by key, overwriting any existing value. A no-op when KV is unconfigured. */
 export async function set(
   key: string,
   value: unknown,
   client: KVClient = defaultClient
 ): Promise<void> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return;
   await client.set(key, value);
 }
 
 /**
  * Upsert a slug's gallery projection into the `briefs:gallery` hash (ADR-0005).
  * Idempotent — re-writing a slug overwrites its field rather than duplicating it.
+ * A no-op when KV is unconfigured.
  */
 export async function addToIndex(
   slug: string,
   entry: unknown,
   client: KVClient = defaultClient
 ): Promise<void> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return;
   await client.hset(keys.gallery, { [slug]: entry });
 }
 
 /**
  * Read the whole gallery index as a slug → entry map in one call — the O(1) read
- * that lets `listBriefs` skip per-slug full-brief fetches. Empty when the index is unset.
+ * that lets `listBriefs` skip per-slug full-brief fetches. Empty when the index is unset
+ * or KV is unconfigured.
  */
 export async function listIndex<T>(client: KVClient = defaultClient): Promise<Record<string, T>> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return {};
   return ((await client.hgetall(keys.gallery)) as Record<string, T> | null) ?? {};
 }
 
-/** List every slug present in the gallery index. Order is unspecified. */
+/** List every slug present in the gallery index. Order is unspecified. Empty when KV is unconfigured. */
 export async function indexSlugs(client: KVClient = defaultClient): Promise<string[]> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return [];
   return client.hkeys(keys.gallery);
 }
 
-/** Atomically increment a counter, returning its new value. Creates it at 1 if absent. */
+/**
+ * Atomically increment a counter, returning its new value. Creates it at 1 if absent.
+ * Returns `0` when KV is unconfigured — with no durable counter the daily rate limits
+ * cannot be enforced, so callers treat every request as under-limit (ADR-0007).
+ */
 export async function incr(
   key: string,
   client: CounterClient = defaultCounterClient
 ): Promise<number> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return 0;
   return client.incr(key);
 }
 
-/** Set a key's time-to-live in seconds, so a counter's window self-expires. */
+/** Set a key's time-to-live in seconds, so a counter's window self-expires. A no-op when KV is unconfigured. */
 export async function expire(
   key: string,
   seconds: number,
   client: CounterClient = defaultCounterClient
 ): Promise<void> {
-  await ensureKVConfig(client);
+  if (skipDatastore(client)) return;
   await client.expire(key, seconds);
 }

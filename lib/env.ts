@@ -35,10 +35,12 @@ export function validateAnthropicConfig() {
   }
 }
 
-export function validateKVConfig() {
-  if (!config.KV_REST_API_URL || !config.KV_REST_API_TOKEN) {
-    throw new Error(
-      "Missing Vercel KV configuration: KV_REST_API_URL and KV_REST_API_TOKEN are required"
-    );
-  }
+/**
+ * Whether Vercel KV is configured for this deployment. KV is optional (issue #49,
+ * ADR-0007): when both REST vars are absent the brief store degrades to a read-only
+ * seed catalog rather than failing. Read live from `process.env` so the value tracks
+ * the current environment — keeping it the single source of truth at the config layer.
+ */
+export function isKVConfigured(): boolean {
+  return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 }
