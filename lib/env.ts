@@ -15,7 +15,9 @@ function getIntEnv(key: string, fallback: number): number {
 
 export const config = {
   NODE_ENV: getEnv("NODE_ENV") || "development",
-  ANTHROPIC_API_KEY: getEnv("ANTHROPIC_API_KEY", true),
+  // Read-only, never required at import: validated lazily at the Anthropic
+  // boundary via validateAnthropicConfig (issue #29), mirroring KV below.
+  ANTHROPIC_API_KEY: getEnv("ANTHROPIC_API_KEY"),
   KV_REST_API_URL: getEnv("KV_REST_API_URL"),
   KV_REST_API_TOKEN: getEnv("KV_REST_API_TOKEN"),
   KV_REST_API_READ_ONLY_TOKEN: getEnv("KV_REST_API_READ_ONLY_TOKEN"),
@@ -24,6 +26,14 @@ export const config = {
   RATE_LIMIT_IP_PER_DAY: getIntEnv("RATE_LIMIT_IP_PER_DAY", 20),
   RATE_LIMIT_GLOBAL_PER_DAY: getIntEnv("RATE_LIMIT_GLOBAL_PER_DAY", 100),
 };
+
+export function validateAnthropicConfig() {
+  if (!config.ANTHROPIC_API_KEY) {
+    throw new Error(
+      "Missing Anthropic configuration: ANTHROPIC_API_KEY is required"
+    );
+  }
+}
 
 export function validateKVConfig() {
   if (!config.KV_REST_API_URL || !config.KV_REST_API_TOKEN) {

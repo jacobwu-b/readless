@@ -4,12 +4,6 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// The real-client path validates KV config by importing env.ts, which requires
-// ANTHROPIC_API_KEY at load. Set it so the missing-config test reaches the KV check
-// (the rest of the suite injects fakes and never imports env). Mirrors the pattern
-// in ratelimit.test.ts.
-process.env.ANTHROPIC_API_KEY ||= "test-key";
-
 import {
   keys,
   get,
