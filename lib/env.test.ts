@@ -11,41 +11,30 @@ test("env - config object has required properties", async () => {
   assert.strictEqual(typeof config.NODE_ENV, "string");
 });
 
-test("env - validateKVConfig throws when KV_REST_API_URL is missing", async () => {
-  const original = process.env.KV_REST_API_URL;
+test("env - isKVConfigured is true only when both KV REST vars are set", async () => {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
   try {
-    delete process.env.KV_REST_API_URL;
+    const { isKVConfigured } = await import("./env");
+
+    process.env.KV_REST_API_URL = "https://example.vercel.app";
     process.env.KV_REST_API_TOKEN = "test-token";
+    assert.strictEqual(isKVConfigured(), true, "both vars set → configured");
 
-    const { validateKVConfig } = await import("./env");
-    assert.throws(
-      () => {
-        validateKVConfig();
-      },
-      /Missing Vercel KV configuration/,
-      "should throw when KV_REST_API_URL is missing"
-    );
-  } finally {
-    if (original) process.env.KV_REST_API_URL = original;
-  }
-});
+    delete process.env.KV_REST_API_URL;
+    assert.strictEqual(isKVConfigured(), false, "url missing → not configured");
 
-test("env - validateKVConfig throws when KV_REST_API_TOKEN is missing", async () => {
-  const original = process.env.KV_REST_API_TOKEN;
-  try {
     process.env.KV_REST_API_URL = "https://example.vercel.app";
     delete process.env.KV_REST_API_TOKEN;
+    assert.strictEqual(isKVConfigured(), false, "token missing → not configured");
 
-    const { validateKVConfig } = await import("./env");
-    assert.throws(
-      () => {
-        validateKVConfig();
-      },
-      /Missing Vercel KV configuration/,
-      "should throw when KV_REST_API_TOKEN is missing"
-    );
+    delete process.env.KV_REST_API_URL;
+    assert.strictEqual(isKVConfigured(), false, "neither var set → not configured");
   } finally {
-    if (original) process.env.KV_REST_API_TOKEN = original;
+    if (url !== undefined) process.env.KV_REST_API_URL = url;
+    else delete process.env.KV_REST_API_URL;
+    if (token !== undefined) process.env.KV_REST_API_TOKEN = token;
+    else delete process.env.KV_REST_API_TOKEN;
   }
 });
 

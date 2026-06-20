@@ -6,6 +6,8 @@ ReadLess turns books into short, structured, AI-generated briefs and serves them
 
 ReadLess is a static frontend (HTML/CSS/vanilla JS) over a handful of Vercel Functions. Briefs are generated with the Anthropic API, validated with `zod`, and persisted in Vercel KV. A committed seed catalog (`data/seeds.json`) ships briefs that exist before anyone generates one.
 
+Vercel KV is **optional** (ADR-0007). With it configured, generated briefs persist and join the gallery, and the daily rate limits apply. Without it, the site runs read-only on the seed catalog: browsing works, and generation still returns a brief — it just isn't persisted (it's shown for the session via `sessionStorage`) and the rate limits can't be enforced.
+
 **Browse.** The gallery (`index.html`) calls `GET /api/briefs` for a lightweight index — every brief as metadata, KV briefs merged with seeds. Opening one routes to `brief.html?slug=…` (the pretty URL `/books/:slug` rewrites to it), which calls `GET /api/briefs/:slug` for the full brief: KV first, then a seed, else 404.
 
 **Generate.** The submit form (`generate.html`) posts `{ title, author? }` to `POST /api/generate`. The handler:
@@ -37,7 +39,7 @@ npm run typecheck           # tsc --noEmit
 npm run build               # vercel build
 ```
 
-`npm run dev` starts `vercel dev` on http://localhost:3000. Generating a brief makes real Anthropic API calls (and spends), so a valid `ANTHROPIC_API_KEY` is required; browsing the seeded gallery works without one. The rate-limit and dedup counters live in KV, so the generate flow needs the `KV_*` vars populated.
+`npm run dev` starts `vercel dev` on http://localhost:3000. Generating a brief makes real Anthropic API calls (and spends), so a valid `ANTHROPIC_API_KEY` is required; browsing the seeded gallery works without one. The dedup cache and rate-limit counters live in KV, so without the `KV_*` vars the generate flow still works but won't persist, dedup, or rate-limit (ADR-0007).
 
 The seed catalog ships committed in [`data/seeds.json`](./data/seeds.json); the one-shot migration that produced it has been retired.
 
@@ -49,8 +51,8 @@ All env vars are read through `lib/env.ts` and nowhere else. Every var the app r
 |---|---|---|---|
 | `NODE_ENV` | no | `development` | Standard Node environment flag. |
 | `ANTHROPIC_API_KEY` | **yes** | — | Auth for the Anthropic API (brief generation). Server-side only. |
-| `KV_REST_API_URL` | yes for KV | — | Vercel KV REST endpoint. Required to read/write briefs. |
-| `KV_REST_API_TOKEN` | yes for KV | — | Vercel KV read/write token. |
+| `KV_REST_API_URL` | no | — | Vercel KV REST endpoint. Both KV vars enable persistence, dedup, and rate limiting; absent, the site runs read-only on seeds (ADR-0007). |
+| `KV_REST_API_TOKEN` | no | — | Vercel KV read/write token. Required alongside the URL to enable KV. |
 | `KV_REST_API_READ_ONLY_TOKEN` | no | — | Vercel KV read-only token. |
 | `KV_URL` | no | — | Vercel KV connection string (provided by Vercel). |
 | `RATE_LIMIT_IP_PER_DAY` | no | `20` | Per-IP daily generation cap. Positive integer; falls back if unset/invalid. |
@@ -59,6 +61,8 @@ All env vars are read through `lib/env.ts` and nowhere else. Every var the app r
 The `KV_*` vars are populated automatically by `vercel env pull` for a linked project, or copied from the KV store's **`.env.local`** tab in the Vercel dashboard.
 
 ## Vercel KV setup
+
+KV is optional (ADR-0007) — skip this to run read-only on the seed catalog. Configure it to persist generated briefs and enforce the daily rate limits:
 
 1. In the Vercel dashboard, open **Storage → Create Database → KV** and attach it to the project.
 2. Run `vercel link` to link the local checkout, then `vercel env pull` to write the `KV_*` vars into `.env`.

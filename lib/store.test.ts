@@ -223,6 +223,38 @@ test("listBriefs returns lightweight index entries without editorial sections", 
   ]);
 });
 
+test("the store serves seeds and generates ephemerally when KV is unconfigured", async () => {
+  // No injected client → the real-client path, which degrades to a seed-only,
+  // write-dropping store when KV is absent (issue #49, ADR-0007). This is the
+  // end-to-end guarantee: the gallery and permalinks resolve from seeds, and a
+  // generation still returns a usable brief even though nothing is persisted.
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  try {
+    delete process.env.KV_REST_API_URL;
+    delete process.env.KV_REST_API_TOKEN;
+
+    const seed = makeBrief({ slug: "sapiens", title: "Sapiens" });
+
+    // Gallery and permalink read straight through to the seeds.
+    assert.deepStrictEqual(
+      (await listBriefs(undefined, [seed])).map((e) => e.slug),
+      ["sapiens"]
+    );
+    assert.deepStrictEqual(await getBrief("sapiens", undefined, [seed]), seed);
+
+    // Generation succeeds and returns the brief; the write is silently dropped, so a
+    // re-read finds nothing — ephemeral, but never an error.
+    const generated = makeBrief({ slug: "deep-work", title: "Deep Work" });
+    const stored = await createBrief(generated, undefined, [seed]);
+    assert.strictEqual(stored.slug, "deep-work");
+    assert.strictEqual(await getBrief("deep-work", undefined, [seed]), null);
+  } finally {
+    if (url !== undefined) process.env.KV_REST_API_URL = url;
+    if (token !== undefined) process.env.KV_REST_API_TOKEN = token;
+  }
+});
+
 test("listBriefs reads the gallery index once and never fetches full briefs (O(1))", async () => {
   const client = fakeClient();
   // A corpus large enough that an N+1 read pattern would be unmistakable.

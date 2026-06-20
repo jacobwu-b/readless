@@ -11,6 +11,8 @@ import {
   addToIndex,
   listIndex,
   indexSlugs,
+  incr,
+  expire,
   type KVClient,
 } from "./kv";
 
@@ -122,17 +124,26 @@ test("indexSlugs returns an empty array when the gallery index is unset", async 
   assert.deepStrictEqual(await indexSlugs(client), []);
 });
 
-test("a helper using the real client fails fast with a clear error when KV is unconfigured", async () => {
+test("real-client helpers degrade to an empty, write-dropping store when KV is unconfigured", async () => {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
   try {
     delete process.env.KV_REST_API_URL;
     delete process.env.KV_REST_API_TOKEN;
 
-    // No injected client → the real-client path runs validateKVConfig before touching
-    // @vercel/kv, so misconfiguration surfaces as a clear message, not an opaque SDK
-    // failure. Regression guard for issue #26.
-    await assert.rejects(() => get(keys.brief("atomic-habits")), /Missing Vercel KV configuration/);
+    // No injected client → the real-client path. With KV unconfigured (issue #49,
+    // ADR-0007) every helper short-circuits before touching @vercel/kv: reads come
+    // back empty, writes are dropped silently, and counters report 0 so callers treat
+    // requests as under-limit. The product runs on its static seeds instead of failing.
+    assert.strictEqual(await get(keys.brief("atomic-habits")), null);
+    assert.deepStrictEqual(await listIndex(), {});
+    assert.deepStrictEqual(await indexSlugs(), []);
+    assert.strictEqual(await incr(keys.rlGlobal("2026-06-20")), 0);
+
+    // Writes resolve without throwing and without a live datastore.
+    await set(keys.brief("atomic-habits"), { slug: "atomic-habits" });
+    await addToIndex("atomic-habits", { slug: "atomic-habits" });
+    await expire(keys.rlGlobal("2026-06-20"), 3600);
   } finally {
     if (url !== undefined) process.env.KV_REST_API_URL = url;
     if (token !== undefined) process.env.KV_REST_API_TOKEN = token;
