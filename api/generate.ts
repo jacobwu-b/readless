@@ -2,8 +2,9 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 import { getCachedSlug, setCachedSlug } from "../lib/cache";
 import { generateBrief } from "../lib/generate";
-import type { KVClient } from "../lib/kv";
+import type { CounterClient, KVClient } from "../lib/kv";
 import { logger } from "../lib/logger";
+import { clientIp, enforceRateLimit } from "../lib/ratelimit";
 import type { Brief } from "../lib/schema";
 import { getBrief, saveBrief } from "../lib/store";
 
@@ -34,6 +35,7 @@ function parseBody(body: unknown): Record<string, unknown> | undefined {
  * under its slug, caches the request → slug mapping, and returns the brief.
  *
  * Outcomes map to status codes: 405 for non-POST, 400 for a missing/blank title,
+ * 429 (with `Retry-After`) when the per-IP or global daily limit is hit (spec 0005),
  * 502 when generation fails. Concurrent identical requests may both generate once
  * (stampede) — accepted under the no-abuse assumption (spec 0002, Open questions).
  *
@@ -45,7 +47,7 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse,
   generate: GenerateBrief = generateBrief,
-  client?: KVClient,
+  client?: KVClient & CounterClient,
   seeds?: Brief[]
 ): Promise<void> {
   if (req.method !== "POST") {
@@ -58,6 +60,19 @@ export default async function handler(
   const title = body?.["title"];
   if (typeof title !== "string" || title.trim() === "") {
     res.status(400).json({ error: "A non-empty 'title' is required" });
+    return;
+  }
+
+  // Abuse controls (spec 0005): throttle per IP and hard-block on the global daily
+  // spend cap before any model call. Spoofable IPs are accepted under no-abuse.
+  const limit = await enforceRateLimit(clientIp(req), { client });
+  if (!limit.allowed) {
+    res.setHeader("Retry-After", String(limit.retryAfter));
+    const error =
+      limit.reason === "global"
+        ? "Daily generation limit reached. Please try again tomorrow."
+        : "Too many requests. Please try again later.";
+    res.status(429).json({ error });
     return;
   }
 

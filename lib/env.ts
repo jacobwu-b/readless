@@ -6,6 +6,13 @@ function getEnv(key: string, required: boolean = false): string | undefined {
   return value;
 }
 
+/** A positive-integer env var, falling back when unset or not a positive integer. */
+function getIntEnv(key: string, fallback: number): number {
+  const value = process.env[key];
+  const parsed = value === undefined ? NaN : Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 export const config = {
   NODE_ENV: getEnv("NODE_ENV") || "development",
   ANTHROPIC_API_KEY: getEnv("ANTHROPIC_API_KEY", true),
@@ -13,6 +20,9 @@ export const config = {
   KV_REST_API_TOKEN: getEnv("KV_REST_API_TOKEN"),
   KV_REST_API_READ_ONLY_TOKEN: getEnv("KV_REST_API_READ_ONLY_TOKEN"),
   KV_URL: getEnv("KV_URL"),
+  // Abuse controls (spec 0005 / ADR-0003). Per-IP throttle + global daily spend backstop.
+  RATE_LIMIT_IP_PER_DAY: getIntEnv("RATE_LIMIT_IP_PER_DAY", 20),
+  RATE_LIMIT_GLOBAL_PER_DAY: getIntEnv("RATE_LIMIT_GLOBAL_PER_DAY", 100),
 };
 
 export function validateKVConfig() {
