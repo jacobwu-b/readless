@@ -47,9 +47,6 @@ function fakeClient(): KVClient & CounterClient {
     async hkeys(key: string): Promise<string[]> {
       return [...(hashes.get(key)?.keys() ?? [])];
     },
-    async smembers(): Promise<string[]> {
-      return [];
-    },
     async incr(key: string): Promise<number> {
       const next = (counters.get(key) ?? 0) + 1;
       counters.set(key, next);

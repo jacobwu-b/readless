@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { saveBrief, createBrief, getBrief, listBriefs, backfillGalleryIndex } from "./store";
-import { keys, type KVClient } from "./kv";
+import { saveBrief, createBrief, getBrief, listBriefs } from "./store";
+import { type KVClient } from "./kv";
 import type { Brief } from "./schema";
 
 /** Per-method call counts, so a test can assert listBriefs reads the index O(1). */
@@ -15,21 +15,18 @@ interface Calls {
  * In-memory stand-in for the slice of `@vercel/kv` the store uses, mirroring the
  * fake in `kv.test.ts`. Lets the store's KV interactions run with no live
  * connection — the store defaults to the real client, tests inject this. The
- * internal maps and `calls` counters are exposed so tests can seed legacy state
- * (the retired `briefs:index` set) and assert the gallery read is O(1).
+ * internal maps and `calls` counters are exposed so tests can inspect stored
+ * state and assert the gallery read is O(1).
  */
 function fakeClient(): KVClient & {
   store: Map<string, unknown>;
-  sets: Map<string, Set<string>>;
   calls: Calls;
 } {
   const store = new Map<string, unknown>();
   const hashes = new Map<string, Map<string, unknown>>();
-  const sets = new Map<string, Set<string>>();
   const calls: Calls = { get: 0, hgetall: 0 };
   return {
     store,
-    sets,
     calls,
     async get<T>(key: string): Promise<T | null> {
       calls.get += 1;
@@ -52,9 +49,6 @@ function fakeClient(): KVClient & {
     },
     async hkeys(key: string): Promise<string[]> {
       return [...(hashes.get(key)?.keys() ?? [])];
-    },
-    async smembers(key: string): Promise<string[]> {
-      return [...(sets.get(key) ?? new Set<string>())];
     },
   };
 }
@@ -244,44 +238,4 @@ test("listBriefs reads the gallery index once and never fetches full briefs (O(1
   // One index read, regardless of corpus size — and no per-slug full-brief fetches.
   assert.strictEqual(client.calls.hgetall, 1);
   assert.strictEqual(client.calls.get, 0);
-});
-
-test("backfillGalleryIndex projects legacy briefs:index entries into the gallery hash", async () => {
-  const client = fakeClient();
-  // Simulate the pre-migration world: full briefs stored, slugs only in the retired set.
-  const deepWork = makeBrief({ slug: "deep-work", title: "Deep Work" });
-  const sapiens = makeBrief({ slug: "sapiens", title: "Sapiens" });
-  await client.set(keys.brief("deep-work"), deepWork);
-  await client.set(keys.brief("sapiens"), sapiens);
-  client.sets.set(keys.index, new Set(["deep-work", "sapiens"]));
-
-  const count = await backfillGalleryIndex(client);
-
-  assert.strictEqual(count, 2);
-  // The gallery now lists both without any legacy set involvement.
-  const entries = await listBriefs(client, []);
-  assert.deepStrictEqual(entries.map((e) => e.slug).sort(), ["deep-work", "sapiens"]);
-  assert.deepStrictEqual(Object.keys(entries[0] ?? {}).sort(), [
-    "author",
-    "category",
-    "cover",
-    "dateAdded",
-    "readTime",
-    "slug",
-    "tags",
-    "title",
-    "year",
-  ]);
-});
-
-test("backfillGalleryIndex skips a legacy slug whose full brief is missing", async () => {
-  const client = fakeClient();
-  await client.set(keys.brief("deep-work"), makeBrief({ slug: "deep-work", title: "Deep Work" }));
-  // "ghost" is in the set but its brief:{slug} was never written (or was evicted).
-  client.sets.set(keys.index, new Set(["deep-work", "ghost"]));
-
-  const count = await backfillGalleryIndex(client);
-
-  assert.strictEqual(count, 1);
-  assert.deepStrictEqual((await listBriefs(client, [])).map((e) => e.slug), ["deep-work"]);
 });

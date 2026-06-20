@@ -7,7 +7,6 @@ import {
   addToIndex,
   listIndex,
   indexSlugs,
-  legacyIndexSlugs,
   type KVClient,
 } from "./kv";
 import type { Brief } from "./schema";
@@ -122,22 +121,4 @@ export async function listBriefs(
   for (const [slug, entry] of Object.entries(stored)) bySlug.set(slug, entry); // KV wins
 
   return [...bySlug.values()];
-}
-
-/**
- * One-shot backfill of the `briefs:gallery` hash from the legacy `briefs:index` set
- * (ADR-0005). For each legacy slug, project its stored full brief into the gallery index;
- * a slug whose `brief:{slug}` is missing is skipped. Returns the number of briefs projected.
- * Idempotent — re-running overwrites each field with the same projection.
- */
-export async function backfillGalleryIndex(client?: KVClient): Promise<number> {
-  const slugs = await legacyIndexSlugs(client);
-  let projected = 0;
-  for (const slug of slugs) {
-    const brief = await get<Brief>(keys.brief(slug), client);
-    if (!brief) continue;
-    await addToIndex(slug, toIndexEntry(brief), client);
-    projected += 1;
-  }
-  return projected;
 }
