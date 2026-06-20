@@ -26,7 +26,7 @@ function validBrief() {
  */
 function fakeClient(): KVClient & CounterClient {
   const store = new Map<string, unknown>();
-  const sets = new Map<string, Set<string>>();
+  const hashes = new Map<string, Map<string, unknown>>();
   const counters = new Map<string, number>();
   return {
     async get<T>(key: string): Promise<T | null> {
@@ -36,14 +36,21 @@ function fakeClient(): KVClient & CounterClient {
       store.set(key, value);
       return "OK";
     },
-    async sadd(key: string, ...members: string[]): Promise<unknown> {
-      const existing = sets.get(key) ?? new Set<string>();
-      members.forEach((m) => existing.add(m));
-      sets.set(key, existing);
-      return members.length;
+    async hset(key: string, value: Record<string, unknown>): Promise<unknown> {
+      const hash = hashes.get(key) ?? new Map<string, unknown>();
+      for (const [field, v] of Object.entries(value)) hash.set(field, v);
+      hashes.set(key, hash);
+      return Object.keys(value).length;
     },
-    async smembers(key: string): Promise<string[]> {
-      return [...(sets.get(key) ?? new Set<string>())];
+    async hgetall(key: string): Promise<Record<string, unknown> | null> {
+      const hash = hashes.get(key);
+      return hash ? Object.fromEntries(hash) : null;
+    },
+    async hkeys(key: string): Promise<string[]> {
+      return [...(hashes.get(key)?.keys() ?? [])];
+    },
+    async smembers(): Promise<string[]> {
+      return [];
     },
     async incr(key: string): Promise<number> {
       const next = (counters.get(key) ?? 0) + 1;

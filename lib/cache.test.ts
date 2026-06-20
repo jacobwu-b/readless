@@ -19,8 +19,14 @@ function fakeClient(): KVClient {
       store.set(key, value);
       return "OK";
     },
-    async sadd(): Promise<unknown> {
+    async hset(): Promise<unknown> {
       return 0;
+    },
+    async hgetall(): Promise<Record<string, unknown> | null> {
+      return null;
+    },
+    async hkeys(): Promise<string[]> {
+      return [];
     },
     async smembers(): Promise<string[]> {
       return [];
