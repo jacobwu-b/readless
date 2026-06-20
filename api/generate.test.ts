@@ -3,7 +3,7 @@ import assert from "node:assert";
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import type { KVClient } from "../lib/kv";
+import type { CounterClient, KVClient } from "../lib/kv";
 
 // handler -> ../lib/generate -> anthropic.ts -> env.ts reads ANTHROPIC_API_KEY at
 // import time. Set it, then import dynamically so the assignment runs before the
@@ -24,9 +24,10 @@ function validBrief() {
  * handler's persistence + dedup paths run with no live connection. Mirrors the fakes
  * in `lib/kv.test.ts`; the handler defaults to the real client, tests inject this.
  */
-function fakeClient(): KVClient {
+function fakeClient(): KVClient & CounterClient {
   const store = new Map<string, unknown>();
   const sets = new Map<string, Set<string>>();
+  const counters = new Map<string, number>();
   return {
     async get<T>(key: string): Promise<T | null> {
       return store.has(key) ? (store.get(key) as T) : null;
@@ -43,6 +44,14 @@ function fakeClient(): KVClient {
     },
     async smembers(key: string): Promise<string[]> {
       return [...(sets.get(key) ?? new Set<string>())];
+    },
+    async incr(key: string): Promise<number> {
+      const next = (counters.get(key) ?? 0) + 1;
+      counters.set(key, next);
+      return next;
+    },
+    async expire(): Promise<unknown> {
+      return 1;
     },
   };
 }
@@ -70,7 +79,7 @@ function fakeRes() {
 }
 
 function req(method: string, body: unknown): VercelRequest {
-  return { method, body } as unknown as VercelRequest;
+  return { method, body, headers: { "x-forwarded-for": "203.0.113.7" } } as unknown as VercelRequest;
 }
 
 test("POST /api/generate returns 200 with a Brief for a valid body", async () => {
@@ -279,4 +288,31 @@ test("POST /api/generate regenerates when a cached slug no longer resolves to a 
   assert.strictEqual(calls, 1, "a dangling cache entry must fall through to generation");
   assert.strictEqual(res.statusCode, 200);
   assert.deepStrictEqual(await client.get(keys.brief(brief.slug)), brief);
+});
+
+test("POST /api/generate returns 429 with Retry-After once the global cap is reached", async () => {
+  const client = fakeClient();
+  // Pre-fill the global daily counter to its default ceiling so the next request blocks.
+  const day = new Date().toISOString().slice(0, 10);
+  for (let i = 0; i < 100; i++) {
+    await client.incr(keys.rlGlobal(day));
+  }
+
+  let called = false;
+  const generate = async () => {
+    called = true;
+    return validBrief() as never;
+  };
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Atomic Habits" }),
+    res as unknown as VercelResponse,
+    generate,
+    client
+  );
+
+  assert.strictEqual(res.statusCode, 429);
+  assert.ok(res.headers["Retry-After"], "a 429 carries a Retry-After header");
+  assert.strictEqual(called, false, "the model must not run once the global cap is reached");
 });
