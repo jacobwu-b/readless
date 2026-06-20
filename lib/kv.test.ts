@@ -4,31 +4,54 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { keys, get, set, addToIndex, list, type KVClient } from "./kv";
+import {
+  keys,
+  get,
+  set,
+  addToIndex,
+  listIndex,
+  indexSlugs,
+  legacyIndexSlugs,
+  type KVClient,
+} from "./kv";
 
 /**
  * An in-memory stand-in for the slice of `@vercel/kv` these helpers use. Lets the
  * round-trip and index tests run with no live KV connection — the helpers default
- * to the real client, tests inject this.
+ * to the real client, tests inject this. The internal maps are exposed so a test
+ * can seed legacy state (the retired `briefs:index` set) the migration reads.
  */
-function fakeClient(): KVClient & { store: Map<string, unknown>; sets: Map<string, Set<string>> } {
+function fakeClient(): KVClient & {
+  store: Map<string, unknown>;
+  hashes: Map<string, Map<string, unknown>>;
+  sets: Map<string, Set<string>>;
+} {
   const store = new Map<string, unknown>();
+  const hashes = new Map<string, Map<string, unknown>>();
   const sets = new Map<string, Set<string>>();
   return {
     store,
+    hashes,
     sets,
     async get<T>(key: string): Promise<T | null> {
-      return (store.has(key) ? (store.get(key) as T) : null);
+      return store.has(key) ? (store.get(key) as T) : null;
     },
     async set(key: string, value: unknown): Promise<unknown> {
       store.set(key, value);
       return "OK";
     },
-    async sadd(key: string, ...members: string[]): Promise<unknown> {
-      const existing = sets.get(key) ?? new Set<string>();
-      members.forEach((m) => existing.add(m));
-      sets.set(key, existing);
-      return members.length;
+    async hset(key: string, value: Record<string, unknown>): Promise<unknown> {
+      const hash = hashes.get(key) ?? new Map<string, unknown>();
+      for (const [field, v] of Object.entries(value)) hash.set(field, v);
+      hashes.set(key, hash);
+      return Object.keys(value).length;
+    },
+    async hgetall(key: string): Promise<Record<string, unknown> | null> {
+      const hash = hashes.get(key);
+      return hash ? Object.fromEntries(hash) : null;
+    },
+    async hkeys(key: string): Promise<string[]> {
+      return [...(hashes.get(key)?.keys() ?? [])];
     },
     async smembers(key: string): Promise<string[]> {
       return [...(sets.get(key) ?? new Set<string>())];
@@ -36,8 +59,9 @@ function fakeClient(): KVClient & { store: Map<string, unknown>; sets: Map<strin
   };
 }
 
-test("keys builds the keyspace owned by lib/kv (ADR-0002)", () => {
+test("keys builds the keyspace owned by lib/kv (ADR-0002, ADR-0005)", () => {
   assert.strictEqual(keys.brief("atomic-habits"), "brief:atomic-habits");
+  assert.strictEqual(keys.gallery, "briefs:gallery");
   assert.strictEqual(keys.index, "briefs:index");
   assert.strictEqual(keys.cache("atomic habits|james clear"), "cache:atomic habits|james clear");
 });
@@ -60,34 +84,57 @@ test("get returns null for a key that was never set", async () => {
   assert.strictEqual(result, null);
 });
 
-test("list returns all members added to the index", async () => {
+test("addToIndex stores a slug's projection that listIndex reads back", async () => {
+  const client = fakeClient();
+  const entry = { slug: "deep-work", title: "Deep Work" };
+
+  await addToIndex("deep-work", entry, client);
+
+  assert.deepStrictEqual(await listIndex<typeof entry>(client), { "deep-work": entry });
+});
+
+test("indexSlugs lists every slug projected into the gallery index", async () => {
   const client = fakeClient();
 
-  await addToIndex("atomic-habits", client);
-  await addToIndex("deep-work", client);
-  await addToIndex("thinking-fast-and-slow", client);
-
-  const members = await list(client);
+  await addToIndex("atomic-habits", { slug: "atomic-habits" }, client);
+  await addToIndex("deep-work", { slug: "deep-work" }, client);
+  await addToIndex("thinking-fast-and-slow", { slug: "thinking-fast-and-slow" }, client);
 
   assert.deepStrictEqual(
-    [...members].sort(),
+    (await indexSlugs(client)).sort(),
     ["atomic-habits", "deep-work", "thinking-fast-and-slow"]
   );
 });
 
-test("addToIndex is idempotent — re-adding a slug does not duplicate it", async () => {
+test("addToIndex overwrites a slug's projection rather than duplicating it", async () => {
   const client = fakeClient();
 
-  await addToIndex("atomic-habits", client);
-  await addToIndex("atomic-habits", client);
+  await addToIndex("atomic-habits", { slug: "atomic-habits", title: "Stale" }, client);
+  await addToIndex("atomic-habits", { slug: "atomic-habits", title: "Fresh" }, client);
 
-  assert.deepStrictEqual(await list(client), ["atomic-habits"]);
+  assert.deepStrictEqual(await indexSlugs(client), ["atomic-habits"]);
+  assert.deepStrictEqual(await listIndex(client), {
+    "atomic-habits": { slug: "atomic-habits", title: "Fresh" },
+  });
 });
 
-test("list returns an empty array when the index has no members", async () => {
+test("listIndex returns an empty map when the gallery index is unset", async () => {
   const client = fakeClient();
 
-  assert.deepStrictEqual(await list(client), []);
+  assert.deepStrictEqual(await listIndex(client), {});
+});
+
+test("indexSlugs returns an empty array when the gallery index is unset", async () => {
+  const client = fakeClient();
+
+  assert.deepStrictEqual(await indexSlugs(client), []);
+});
+
+test("legacyIndexSlugs reads the retired briefs:index set for the migration", async () => {
+  const client = fakeClient();
+  client.sets.set(keys.index, new Set(["atomic-habits", "deep-work"]));
+
+  assert.deepStrictEqual((await legacyIndexSlugs(client)).sort(), ["atomic-habits", "deep-work"]);
 });
 
 /**

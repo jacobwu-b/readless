@@ -1,6 +1,15 @@
 import seedData from "../data/seeds.json" with { type: "json" };
 
-import { keys, get, set, addToIndex, list, type KVClient } from "./kv";
+import {
+  keys,
+  get,
+  set,
+  addToIndex,
+  listIndex,
+  indexSlugs,
+  legacyIndexSlugs,
+  type KVClient,
+} from "./kv";
 import type { Brief } from "./schema";
 import { slugify } from "./slug";
 
@@ -46,10 +55,17 @@ function toIndexEntry(brief: Brief): IndexEntry {
   };
 }
 
-/** Persist a brief under its slug and register it in the gallery index. */
+/**
+ * Persist a brief under its slug and register its gallery projection.
+ *
+ * Two writes, both owned here: the full Brief under `brief:{slug}` (read by permalinks),
+ * and its lightweight `IndexEntry` into the `briefs:gallery` hash (read by the gallery in
+ * one call, ADR-0005). The gallery index is derived state — keeping it correct depends on
+ * every brief flowing through this function.
+ */
 export async function saveBrief(brief: Brief, client?: KVClient): Promise<void> {
   await set(keys.brief(brief.slug), brief, client);
-  await addToIndex(brief.slug, client);
+  await addToIndex(brief.slug, toIndexEntry(brief), client);
 }
 
 /**
@@ -68,7 +84,7 @@ export async function createBrief(
   client?: KVClient,
   seeds: Brief[] = defaultSeeds
 ): Promise<Brief> {
-  const taken = new Set([...(await list(client)), ...seeds.map((seed) => seed.slug)]);
+  const taken = new Set([...(await indexSlugs(client)), ...seeds.map((seed) => seed.slug)]);
   const stored: Brief = { ...brief, slug: slugify(brief.title, taken) };
   await saveBrief(stored, client);
   return stored;
@@ -91,17 +107,37 @@ export async function getBrief(
 /**
  * List every brief as a lightweight index entry: seeds merged with KV briefs,
  * de-duplicated by slug with KV winning on collision.
+ *
+ * One `HGETALL` of the pre-projected `briefs:gallery` hash (ADR-0005) — no per-slug
+ * full-brief fetches, so the gallery read is O(1) KV round-trips regardless of corpus size.
  */
 export async function listBriefs(
   client?: KVClient,
   seeds: Brief[] = defaultSeeds
 ): Promise<IndexEntry[]> {
-  const slugs = await list(client);
-  const stored = await Promise.all(slugs.map((slug) => get<Brief>(keys.brief(slug), client)));
+  const stored = await listIndex<IndexEntry>(client);
 
   const bySlug = new Map<string, IndexEntry>();
   for (const seed of seeds) bySlug.set(seed.slug, toIndexEntry(seed));
-  for (const brief of stored) if (brief) bySlug.set(brief.slug, toIndexEntry(brief)); // KV wins
+  for (const [slug, entry] of Object.entries(stored)) bySlug.set(slug, entry); // KV wins
 
   return [...bySlug.values()];
+}
+
+/**
+ * One-shot backfill of the `briefs:gallery` hash from the legacy `briefs:index` set
+ * (ADR-0005). For each legacy slug, project its stored full brief into the gallery index;
+ * a slug whose `brief:{slug}` is missing is skipped. Returns the number of briefs projected.
+ * Idempotent — re-running overwrites each field with the same projection.
+ */
+export async function backfillGalleryIndex(client?: KVClient): Promise<number> {
+  const slugs = await legacyIndexSlugs(client);
+  let projected = 0;
+  for (const slug of slugs) {
+    const brief = await get<Brief>(keys.brief(slug), client);
+    if (!brief) continue;
+    await addToIndex(slug, toIndexEntry(brief), client);
+    projected += 1;
+  }
+  return projected;
 }

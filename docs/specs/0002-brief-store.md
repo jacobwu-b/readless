@@ -35,6 +35,8 @@ Without dedup, identical requests would re-pay the model cost every time.
 
 - [ ] `saveBrief` then `getBrief` round-trips a brief through KV.
 - [ ] `listBriefs` merges KV-stored briefs with static seeds, de-duplicated by slug.
+- [ ] `listBriefs` reads the gallery index in O(1) KV round-trips — one index read, no per-slug
+      full-brief fetches — regardless of corpus size (ADR-0005).
 - [ ] `getBrief` falls back to a seed when KV has no entry, and returns null for an unknown slug.
 - [ ] `slugify` is deterministic and disambiguates collisions.
 - [ ] A repeat (title|author) generate request returns the cached brief without calling the model;
@@ -46,8 +48,10 @@ Without dedup, identical requests would re-pay the model cost every time.
 ## Approach
 
 `lib/kv.ts` is the only module importing `@vercel/kv` and owns the keyspace (`brief:{slug}` for full
-briefs, an index set for listing, and a `cache:{key}` → slug map for dedup) — see ADR
-`0002-kv-keyspace`. `lib/store.ts` builds `saveBrief`/`getBrief`/`listBriefs` on top, merging KV with
+briefs, a `briefs:gallery` hash of `IndexEntry` projections for listing, and a `cache:{key}` → slug
+map for dedup) — see ADRs `0002-kv-keyspace` and `0005-gallery-projection-index`. `saveBrief` writes
+both the full brief and its gallery projection so `listBriefs` is one `HGETALL`, not an N+1.
+`lib/store.ts` builds `saveBrief`/`getBrief`/`listBriefs` on top, merging KV with
 static seeds from `data/seeds.json`; `lib/slug.ts` produces slugs. `lib/cache.ts` normalizes the
 request into a cache key and maps it to a slug. `api/generate.ts` gains persistence + cache lookup;
 `api/briefs/*` expose read endpoints.

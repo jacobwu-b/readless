@@ -1,6 +1,6 @@
 # ADR-0002: Vercel KV keyspace and access pattern behind lib/kv.ts
 
-> Status: accepted
+> Status: accepted (the `briefs:index` gallery-listing decision is superseded by ADR-0005)
 > Date: 2026-06-17
 > Deciders: @jacobwu-b
 
@@ -18,7 +18,9 @@ gallery will encode these keys, making later change costly.
 We will introduce `lib/kv.ts` as the sole importer of `@vercel/kv` and the owner of the keyspace:
 
 - `brief:{slug}` → the full serialized `Brief` JSON.
-- An index set (`briefs:index`) of slugs, used to list the gallery.
+- An index set (`briefs:index`) of slugs, used to list the gallery. *(Superseded by ADR-0005: the
+  gallery now reads a `briefs:gallery` hash of `IndexEntry` projections in one call; the slug set is
+  retired.)*
 - `cache:{normalizedKey}` → slug, mapping a normalized (title|author) request to an existing brief
   for dedup.
 
