@@ -1,11 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-// generate.ts -> anthropic.ts -> env.ts constructs `config` at import time, which
-// requires ANTHROPIC_API_KEY. Set it, then import dynamically so the assignment
-// runs before the module graph loads (static imports are hoisted above it).
-process.env.ANTHROPIC_API_KEY ||= "test-key";
-const { generateBrief, BriefGenerationError } = await import("./generate");
+// generateBrief is exercised with an injected fake client, so it never constructs
+// the real Anthropic client and needs no ANTHROPIC_API_KEY (issue #29).
+import { generateBrief, BriefGenerationError } from "./generate";
 
 /** A well-formed brief that satisfies the Brief schema (mirrors schema.test.ts). */
 function validBrief() {

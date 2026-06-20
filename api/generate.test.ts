@@ -5,14 +5,12 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 import type { CounterClient, KVClient } from "../lib/kv";
 
-// handler -> ../lib/generate -> anthropic.ts -> env.ts reads ANTHROPIC_API_KEY at
-// import time. Set it, then import dynamically so the assignment runs before the
-// module graph loads (static imports are hoisted above it).
-process.env.ANTHROPIC_API_KEY ||= "test-key";
-const { default: handler } = await import("./generate");
-const { BriefGenerationError } = await import("../lib/generate");
-const { keys } = await import("../lib/kv");
-const { cacheKey } = await import("../lib/cache");
+// The handler injects fake KV/model boundaries, so importing it constructs no real
+// Anthropic client and needs no ANTHROPIC_API_KEY (issue #29).
+import handler from "./generate";
+import { BriefGenerationError } from "../lib/generate";
+import { keys } from "../lib/kv";
+import { cacheKey } from "../lib/cache";
 
 /** A minimal well-formed brief; the handler treats it as an opaque pass-through. */
 function validBrief() {

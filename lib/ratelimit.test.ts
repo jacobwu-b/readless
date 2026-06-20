@@ -2,13 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 import type { CounterClient } from "./kv";
-
-// ratelimit -> env.ts reads ANTHROPIC_API_KEY at import time. Set it, then import
-// dynamically so the assignment runs before the module graph loads (static imports
-// are hoisted above it). Mirrors the pattern in api/generate.test.ts.
-process.env.ANTHROPIC_API_KEY ||= "test-key";
-const { clientIp, enforceRateLimit } = await import("./ratelimit");
-const { keys } = await import("./kv");
+import { keys } from "./kv";
+import { clientIp, enforceRateLimit } from "./ratelimit";
 
 /**
  * In-memory stand-in for the counter slice of `@vercel/kv`, mirroring the fakes in

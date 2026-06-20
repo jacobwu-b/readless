@@ -1,6 +1,6 @@
 import type Anthropic from "@anthropic-ai/sdk";
 
-import { anthropic } from "./anthropic";
+import { getAnthropicClient } from "./anthropic";
 import { logger } from "./logger";
 import { buildBriefPrompt } from "./prompt";
 import { BriefSchema, type Brief } from "./schema";
@@ -47,12 +47,12 @@ const MAX_TOKENS = 32000;
  * Returns a typed `Brief`, or throws a `BriefGenerationError` whose `code` says why.
  *
  * `client` is injectable so the model boundary can be mocked in tests; production
- * callers use the default configured client.
+ * callers omit it and get the lazily-constructed default client.
  */
 export async function generateBrief(
   title: string,
   author?: string,
-  client: BriefModelClient = anthropic
+  client: BriefModelClient = getAnthropicClient()
 ): Promise<Brief> {
   const system = buildBriefPrompt(title, author);
 
