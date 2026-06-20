@@ -120,7 +120,7 @@ Violating any of these requires written approval *before* the code is written.
 - **State:** Frontend is static HTML/CSS/vanilla JS — no client-side framework or state library. All persistent state lives in Vercel KV behind the `api/` functions.
 - **Configuration:** all env vars read from `lib/env.ts`; nowhere else. New env vars → `.env.example` entry in same PR. No secrets in code, comments, or logs.
 - **Schema:** any persistent schema change ships with a migration in the same PR. No exceptions.
-- **Dependencies:** new deps and version bumps require approval (name, version, justification, why existing deps don't solve it, weekly downloads, last publish). Major bumps need changelog review. Lockfile drift from main without explanation is stop-and-report.
+- **Dependencies:** adding a new dependency, or any manual/major version change, requires approval (name, version, justification, why existing deps don't solve it, weekly downloads, last publish). Major bumps need changelog review. **Exception:** Dependabot `semver-minor`/`semver-patch` PRs auto-merge on green CI without the approval click — green tests are their gate (ADR-0006). Lockfile drift from main without explanation is stop-and-report.
 - **Logging:** project logger only — no `console.log`/`print` in committed code. Never catch without logging or re-raising. Never swallow an error to pass a test.
 - **Soft-delete:** N/A — single-user brief store with no soft-delete model yet. Revisit when user accounts land.
 
