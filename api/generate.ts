@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 import { getCachedSlug, setCachedSlug } from "../lib/cache.js";
+import { ConfigError } from "../lib/env.js";
 import { generateBrief } from "../lib/generate.js";
 import type { CounterClient, KVClient } from "../lib/kv.js";
 import { logger } from "../lib/logger.js";
@@ -113,6 +114,15 @@ export default async function handler(
     await setCachedSlug(title, author, stored.slug, client);
     res.status(200).json(stored);
   } catch (error) {
+    // A missing API key is a server misconfiguration, not a failed model call:
+    // surface it as a distinct 500 so the deployer fixes the env var rather than
+    // chasing a phantom "retry" (issue #53). Everything else is a genuine
+    // generation failure and stays a 502.
+    if (error instanceof ConfigError) {
+      logger.error("brief generation misconfigured", error, { title });
+      res.status(500).json({ error: "Brief generation is not configured on the server." });
+      return;
+    }
     logger.error(
       "brief generation failed",
       error instanceof Error ? error : undefined,
