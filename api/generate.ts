@@ -32,14 +32,18 @@ function parseBody(body: unknown): Record<string, unknown> | undefined {
  *
  * Validates the body shape, then short-circuits on a repeat: a normalized
  * (title|author) request that has already been generated returns the stored brief
- * without calling the model (spec 0002). Otherwise it generates, persists the brief
- * under its slug, caches the request → slug mapping, and returns the brief.
+ * without calling the model (spec 0002). Dedup is checked before the abuse controls so
+ * a cache hit costs nothing against the daily spend cap (issue #22). Otherwise it
+ * enforces the rate limits, generates, persists the brief under its slug, caches the
+ * request → slug mapping, and returns the brief.
  *
  * Outcomes map to status codes: 405 for non-POST, 413 for an oversized body, 400 for
  * a title/author that fails validation (spec 0005), 429 (with `Retry-After`) when the
  * per-IP or global daily limit is hit (spec 0005), 502 when generation fails. The body
- * is size-capped and validated before any model call. Concurrent identical requests may
- * both generate once (stampede) — accepted under the no-abuse assumption (spec 0002).
+ * is size-capped and validated before any model call, and the spend cap is charged only
+ * on the model-bound path — a failed generation still counts (it likely incurred spend).
+ * Concurrent identical requests may both generate once (stampede) — accepted under the
+ * no-abuse assumption (spec 0002).
  *
  * `generate`, `client`, and `seeds` are injectable so the model and both store
  * boundaries can be mocked in tests; Vercel only ever invokes the handler with
@@ -72,8 +76,24 @@ export default async function handler(
   }
   const { title, author } = input.value;
 
+  // Dedup runs before the abuse controls so a cache hit — a zero-cost KV read that
+  // never touches the model — neither consumes nor is blocked by the daily spend cap
+  // (issue #22(a)). A cached request returns its stored brief; a dangling cache entry
+  // (slug with no brief) falls through to the rate-limited generation path below.
+  const cachedSlug = await getCachedSlug(title, author, client);
+  if (cachedSlug) {
+    const cached = await getBrief(cachedSlug, client, seeds);
+    if (cached) {
+      res.status(200).json(cached);
+      return;
+    }
+  }
+
   // Abuse controls (spec 0005): throttle per IP and hard-block on the global daily
-  // spend cap before any model call. Spoofable IPs are accepted under no-abuse.
+  // spend cap before any model call, so only genuinely model-bound requests consume
+  // budget. A generation that fails below still counts — a failed call usually still
+  // incurred model spend, and counting it keeps the cap a conservative spend backstop
+  // (issue #22(b)). Spoofable IPs are accepted under no-abuse.
   const limit = await enforceRateLimit(clientIp(req), { client });
   if (!limit.allowed) {
     res.setHeader("Retry-After", String(limit.retryAfter));
@@ -83,17 +103,6 @@ export default async function handler(
         : "Too many requests. Please try again later.";
     res.status(429).json({ error });
     return;
-  }
-
-  // Dedup: a cached request returns its stored brief without paying the model.
-  // A dangling cache entry (slug with no brief) falls through to regeneration.
-  const cachedSlug = await getCachedSlug(title, author, client);
-  if (cachedSlug) {
-    const cached = await getBrief(cachedSlug, client, seeds);
-    if (cached) {
-      res.status(200).json(cached);
-      return;
-    }
   }
 
   try {
