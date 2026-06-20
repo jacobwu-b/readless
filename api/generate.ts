@@ -7,6 +7,7 @@ import { logger } from "../lib/logger";
 import { clientIp, enforceRateLimit } from "../lib/ratelimit";
 import type { Brief } from "../lib/schema";
 import { getBrief, saveBrief } from "../lib/store";
+import { bodyTooLarge, validateGenerateInput } from "../lib/validate";
 
 /** The boundary `handler` calls. Injectable so tests mock generation cleanly. */
 type GenerateBrief = (title: string, author?: string) => Promise<Brief>;
@@ -34,10 +35,11 @@ function parseBody(body: unknown): Record<string, unknown> | undefined {
  * without calling the model (spec 0002). Otherwise it generates, persists the brief
  * under its slug, caches the request → slug mapping, and returns the brief.
  *
- * Outcomes map to status codes: 405 for non-POST, 400 for a missing/blank title,
- * 429 (with `Retry-After`) when the per-IP or global daily limit is hit (spec 0005),
- * 502 when generation fails. Concurrent identical requests may both generate once
- * (stampede) — accepted under the no-abuse assumption (spec 0002, Open questions).
+ * Outcomes map to status codes: 405 for non-POST, 413 for an oversized body, 400 for
+ * a title/author that fails validation (spec 0005), 429 (with `Retry-After`) when the
+ * per-IP or global daily limit is hit (spec 0005), 502 when generation fails. The body
+ * is size-capped and validated before any model call. Concurrent identical requests may
+ * both generate once (stampede) — accepted under the no-abuse assumption (spec 0002).
  *
  * `generate`, `client`, and `seeds` are injectable so the model and both store
  * boundaries can be mocked in tests; Vercel only ever invokes the handler with
@@ -56,12 +58,19 @@ export default async function handler(
     return;
   }
 
-  const body = parseBody(req.body);
-  const title = body?.["title"];
-  if (typeof title !== "string" || title.trim() === "") {
-    res.status(400).json({ error: "A non-empty 'title' is required" });
+  // Reject an oversized body before parsing or touching the model (spec 0005).
+  if (bodyTooLarge(req.body)) {
+    res.status(413).json({ error: "Request body too large" });
     return;
   }
+
+  // Validate length, trim, and reject control chars before any model call (spec 0005).
+  const input = validateGenerateInput(parseBody(req.body));
+  if (!input.ok) {
+    res.status(400).json({ error: input.error });
+    return;
+  }
+  const { title, author } = input.value;
 
   // Abuse controls (spec 0005): throttle per IP and hard-block on the global daily
   // spend cap before any model call. Spoofable IPs are accepted under no-abuse.
@@ -75,9 +84,6 @@ export default async function handler(
     res.status(429).json({ error });
     return;
   }
-
-  const rawAuthor = body?.["author"];
-  const author = typeof rawAuthor === "string" && rawAuthor.trim() !== "" ? rawAuthor : undefined;
 
   // Dedup: a cached request returns its stored brief without paying the model.
   // A dangling cache entry (slug with no brief) falls through to regeneration.
