@@ -495,7 +495,8 @@
     }
 
     function formatDate(str) {
-      const d = new Date(str);
+      const d = new Date(str + 'T00:00:00'); // local midnight → no UTC off-by-one
+      if (isNaN(d.getTime())) return escapeHtml(str);
       return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     }
 
