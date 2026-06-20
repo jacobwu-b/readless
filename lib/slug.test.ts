@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { slugify } from "./slug";
+import { slugify } from "./slug.js";
 
 test("slugify is deterministic — the same title yields the same slug", () => {
   assert.strictEqual(slugify("Thinking, Fast and Slow"), slugify("Thinking, Fast and Slow"));

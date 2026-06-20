@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import type { KVClient } from "../../lib/kv";
-import type { Brief } from "../../lib/schema";
-import { listBriefs } from "../../lib/store";
+import type { KVClient } from "../../lib/kv.js";
+import type { Brief } from "../../lib/schema.js";
+import { listBriefs } from "../../lib/store.js";
 
 /**
  * `GET /api/briefs` — the gallery index: every brief as a lightweight entry

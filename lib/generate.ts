@@ -1,9 +1,9 @@
 import type Anthropic from "@anthropic-ai/sdk";
 
-import { getAnthropicClient } from "./anthropic";
-import { logger } from "./logger";
-import { buildBriefPrompt } from "./prompt";
-import { BriefSchema, type Brief } from "./schema";
+import { getAnthropicClient } from "./anthropic.js";
+import { logger } from "./logger.js";
+import { buildBriefPrompt } from "./prompt.js";
+import { BriefSchema, type Brief } from "./schema.js";
 
 /** Why a brief could not be produced. Discriminates `BriefGenerationError`. */
 export type BriefErrorCode =

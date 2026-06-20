@@ -1,0 +1,4 @@
+# Test files live next to their source but must never deploy as serverless
+# functions: Vercel turns every api/**/*.ts into a public function, which would
+# expose api/**/*.test.ts as live endpoints. Keep them out of the deployment.
+api/**/*.test.ts

@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-import { config, validateAnthropicConfig } from "./env";
+import { config, validateAnthropicConfig } from "./env.js";
 
 let client: Anthropic | undefined;
 

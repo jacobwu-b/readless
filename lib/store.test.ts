@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { saveBrief, createBrief, getBrief, listBriefs } from "./store";
-import { type KVClient } from "./kv";
-import type { Brief } from "./schema";
+import { saveBrief, createBrief, getBrief, listBriefs } from "./store.js";
+import { type KVClient } from "./kv.js";
+import type { Brief } from "./schema.js";
 
 /** Per-method call counts, so a test can assert listBriefs reads the index O(1). */
 interface Calls {

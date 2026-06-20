@@ -3,14 +3,14 @@ import assert from "node:assert";
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import type { CounterClient, KVClient } from "../lib/kv";
+import type { CounterClient, KVClient } from "../lib/kv.js";
 
 // The handler injects fake KV/model boundaries, so importing it constructs no real
 // Anthropic client and needs no ANTHROPIC_API_KEY (issue #29).
-import handler from "./generate";
-import { BriefGenerationError } from "../lib/generate";
-import { keys } from "../lib/kv";
-import { cacheKey } from "../lib/cache";
+import handler from "./generate.js";
+import { BriefGenerationError } from "../lib/generate.js";
+import { keys } from "../lib/kv.js";
+import { cacheKey } from "../lib/cache.js";
 
 /** A minimal well-formed brief; the handler treats it as an opaque pass-through. */
 function validBrief() {

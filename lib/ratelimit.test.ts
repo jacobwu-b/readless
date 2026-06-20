@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import type { CounterClient } from "./kv";
-import { keys } from "./kv";
-import { clientIp, enforceRateLimit } from "./ratelimit";
+import type { CounterClient } from "./kv.js";
+import { keys } from "./kv.js";
+import { clientIp, enforceRateLimit } from "./ratelimit.js";
 
 /**
  * In-memory stand-in for the counter slice of `@vercel/kv`, mirroring the fakes in

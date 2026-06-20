@@ -1,4 +1,4 @@
-import { keys, get, set, type KVClient } from "./kv";
+import { keys, get, set, type KVClient } from "./kv.js";
 
 /**
  * Request dedup: maps a normalized (title|author) request to the slug of an

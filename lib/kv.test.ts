@@ -14,7 +14,7 @@ import {
   incr,
   expire,
   type KVClient,
-} from "./kv";
+} from "./kv.js";
 
 /**
  * An in-memory stand-in for the slice of `@vercel/kv` these helpers use. Lets the

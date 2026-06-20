@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { buildBriefPrompt } from "./prompt";
-import { COUNTS } from "./schema";
+import { buildBriefPrompt } from "./prompt.js";
+import { COUNTS } from "./schema.js";
 
 test("buildBriefPrompt is deterministic for the same inputs", () => {
   const a = buildBriefPrompt("Atomic Habits", "James Clear");

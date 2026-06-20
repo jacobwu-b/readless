@@ -3,7 +3,7 @@ import assert from "node:assert";
 
 // generateBrief is exercised with an injected fake client, so it never constructs
 // the real Anthropic client and needs no ANTHROPIC_API_KEY (issue #29).
-import { generateBrief, BriefGenerationError } from "./generate";
+import { generateBrief, BriefGenerationError } from "./generate.js";
 
 /** A well-formed brief that satisfies the Brief schema (mirrors schema.test.ts). */
 function validBrief() {
