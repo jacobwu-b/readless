@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { cacheKey, getCachedSlug, setCachedSlug } from "./cache";
-import { keys, type KVClient } from "./kv";
+import { cacheKey, getCachedSlug, setCachedSlug } from "./cache.js";
+import { keys, type KVClient } from "./kv.js";
 
 /**
  * In-memory stand-in for the slice of `@vercel/kv` the cache uses, mirroring the

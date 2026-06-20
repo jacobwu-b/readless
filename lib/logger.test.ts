@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 test("logger - debug logs structured output", async () => {
-  const { logger } = await import("./logger");
+  const { logger } = await import("./logger.js");
   const originalLog = console.log;
   const logs: string[] = [];
 
@@ -26,7 +26,7 @@ test("logger - debug logs structured output", async () => {
 });
 
 test("logger - info logs with context", async () => {
-  const { logger } = await import("./logger");
+  const { logger } = await import("./logger.js");
   const originalLog = console.log;
   const logs: string[] = [];
 
@@ -50,7 +50,7 @@ test("logger - info logs with context", async () => {
 });
 
 test("logger - warn logs at warn level", async () => {
-  const { logger } = await import("./logger");
+  const { logger } = await import("./logger.js");
   const originalLog = console.log;
   const logs: string[] = [];
 
@@ -72,7 +72,7 @@ test("logger - warn logs at warn level", async () => {
 });
 
 test("logger - error logs error object", async () => {
-  const { logger } = await import("./logger");
+  const { logger } = await import("./logger.js");
   const originalLog = console.log;
   const logs: string[] = [];
 
@@ -98,7 +98,7 @@ test("logger - error logs error object", async () => {
 });
 
 test("logger - never throws on logging failure", async () => {
-  const { logger } = await import("./logger");
+  const { logger } = await import("./logger.js");
   const originalLog = console.log;
 
   try {
@@ -117,7 +117,7 @@ test("logger - never throws on logging failure", async () => {
 });
 
 test("logger - all methods exist", async () => {
-  const { logger } = await import("./logger");
+  const { logger } = await import("./logger.js");
   assert.strictEqual(typeof logger.debug, "function");
   assert.strictEqual(typeof logger.info, "function");
   assert.strictEqual(typeof logger.warn, "function");

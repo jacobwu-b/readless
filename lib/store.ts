@@ -8,9 +8,9 @@ import {
   listIndex,
   indexSlugs,
   type KVClient,
-} from "./kv";
-import type { Brief } from "./schema";
-import { slugify } from "./slug";
+} from "./kv.js";
+import type { Brief } from "./schema.js";
+import { slugify } from "./slug.js";
 
 /**
  * The brief store: save/get/list built on the `lib/kv.ts` keyspace (ADR-0002),

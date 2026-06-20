@@ -3,11 +3,11 @@ import assert from "node:assert";
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import type { KVClient } from "../../lib/kv";
-import { saveBrief } from "../../lib/store";
-import type { Brief } from "../../lib/schema";
+import type { KVClient } from "../../lib/kv.js";
+import { saveBrief } from "../../lib/store.js";
+import type { Brief } from "../../lib/schema.js";
 
-import handler from "./[slug]";
+import handler from "./[slug].js";
 
 /**
  * In-memory stand-in for the slice of `@vercel/kv` the store uses, mirroring the

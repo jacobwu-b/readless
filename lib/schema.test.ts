@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-import { BriefSchema, COUNTS } from "./schema";
+import { BriefSchema, COUNTS } from "./schema.js";
 
 // A well-formed brief modeled on the existing curated "Atomic Habits" page,
 // trimmed to the smallest realistic shape the schema must accept.

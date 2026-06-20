@@ -8,19 +8,19 @@ import assert from "node:assert";
 delete process.env.ANTHROPIC_API_KEY;
 
 test("importing the config layer does not throw when ANTHROPIC_API_KEY is unset", async () => {
-  const { config } = await import("./env");
+  const { config } = await import("./env.js");
   assert.strictEqual(config.ANTHROPIC_API_KEY, undefined);
 });
 
 test("a read-only consumer (ratelimit) imports without ANTHROPIC_API_KEY present", async () => {
   // ratelimit reads only RATE_LIMIT_* from config; it must not inherit the
   // Anthropic-key requirement just by importing the config layer.
-  const { enforceRateLimit } = await import("./ratelimit");
+  const { enforceRateLimit } = await import("./ratelimit.js");
   assert.strictEqual(typeof enforceRateLimit, "function");
 });
 
 test("validateAnthropicConfig throws when ANTHROPIC_API_KEY is missing", async () => {
-  const { validateAnthropicConfig } = await import("./env");
+  const { validateAnthropicConfig } = await import("./env.js");
   assert.throws(
     () => {
       validateAnthropicConfig();
@@ -31,7 +31,7 @@ test("validateAnthropicConfig throws when ANTHROPIC_API_KEY is missing", async (
 });
 
 test("getAnthropicClient throws when ANTHROPIC_API_KEY is missing", async () => {
-  const { getAnthropicClient } = await import("./anthropic");
+  const { getAnthropicClient } = await import("./anthropic.js");
   assert.throws(
     () => {
       getAnthropicClient();

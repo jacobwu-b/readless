@@ -5,7 +5,7 @@ import assert from "node:assert";
 process.env.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || "test-key";
 
 test("env - config object has required properties", async () => {
-  const { config } = await import("./env");
+  const { config } = await import("./env.js");
   assert(config.ANTHROPIC_API_KEY);
   assert(config.NODE_ENV);
   assert.strictEqual(typeof config.NODE_ENV, "string");
@@ -15,7 +15,7 @@ test("env - isKVConfigured is true only when both KV REST vars are set", async (
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
   try {
-    const { isKVConfigured } = await import("./env");
+    const { isKVConfigured } = await import("./env.js");
 
     process.env.KV_REST_API_URL = "https://example.vercel.app";
     process.env.KV_REST_API_TOKEN = "test-token";
@@ -39,7 +39,7 @@ test("env - isKVConfigured is true only when both KV REST vars are set", async (
 });
 
 test("env - validates config contains all expected properties", async () => {
-  const { config } = await import("./env");
+  const { config } = await import("./env.js");
   const expectedKeys = [
     "NODE_ENV",
     "ANTHROPIC_API_KEY",

@@ -1,4 +1,4 @@
-import { COUNTS } from "./schema";
+import { COUNTS } from "./schema.js";
 
 /**
  * Builds the system prompt that instructs the model to produce a single Brief as JSON

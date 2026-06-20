@@ -1,13 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import { getCachedSlug, setCachedSlug } from "../lib/cache";
-import { generateBrief } from "../lib/generate";
-import type { CounterClient, KVClient } from "../lib/kv";
-import { logger } from "../lib/logger";
-import { clientIp, enforceRateLimit } from "../lib/ratelimit";
-import type { Brief } from "../lib/schema";
-import { getBrief, createBrief } from "../lib/store";
-import { bodyTooLarge, validateGenerateInput } from "../lib/validate";
+import { getCachedSlug, setCachedSlug } from "../lib/cache.js";
+import { generateBrief } from "../lib/generate.js";
+import type { CounterClient, KVClient } from "../lib/kv.js";
+import { logger } from "../lib/logger.js";
+import { clientIp, enforceRateLimit } from "../lib/ratelimit.js";
+import type { Brief } from "../lib/schema.js";
+import { getBrief, createBrief } from "../lib/store.js";
+import { bodyTooLarge, validateGenerateInput } from "../lib/validate.js";
 
 /** The boundary `handler` calls. Injectable so tests mock generation cleanly. */
 type GenerateBrief = (title: string, author?: string) => Promise<Brief>;

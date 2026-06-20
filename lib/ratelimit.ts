@@ -1,5 +1,5 @@
-import { config } from "./env";
-import { keys, incr, expire, type CounterClient } from "./kv";
+import { config } from "./env.js";
+import { keys, incr, expire, type CounterClient } from "./kv.js";
 
 /**
  * Per-IP + global daily rate limiting on `POST /api/generate` (spec 0005, ADR-0003).

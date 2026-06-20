@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import type { KVClient } from "../../lib/kv";
-import { getBrief } from "../../lib/store";
+import type { KVClient } from "../../lib/kv.js";
+import { getBrief } from "../../lib/store.js";
 
 /**
  * `GET /api/briefs/[slug]` — the full brief for a single slug: KV first, then a

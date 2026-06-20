@@ -1,6 +1,6 @@
 import { kv } from "@vercel/kv";
 
-import { isKVConfigured } from "./env";
+import { isKVConfigured } from "./env.js";
 
 /**
  * The Vercel KV keyspace, owned solely by this module (ADR-0002, ADR-0005). KV has

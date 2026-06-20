@@ -7,7 +7,7 @@ import {
   TITLE_MAX,
   bodyTooLarge,
   validateGenerateInput,
-} from "./validate";
+} from "./validate.js";
 
 /** A control character built at runtime so the source carries no raw control bytes. */
 const NUL = String.fromCharCode(0);
