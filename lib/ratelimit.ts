@@ -10,7 +10,8 @@ import { keys, incr, expire, type CounterClient } from "./kv";
  * day. Each counter is `incr`'d per request and re-armed with a TTL on every hit so the
  * window self-expires; the date-stamped key means a new day always starts fresh.
  *
- * Header-derived IPs are spoofable; defeating that is out of scope (spec 0005).
+ * The per-IP key derives from the platform's trusted forwarding headers (see `clientIp`);
+ * fully defeating header spoofing is out of scope (spec 0005).
  */
 
 const SECONDS_PER_DAY = 24 * 60 * 60;
@@ -103,18 +104,28 @@ export async function enforceRateLimit(
 type IpHeaders = { headers: Record<string, string | string[] | undefined> };
 
 /**
- * Best-effort client IP from the platform's forwarding headers: the first hop of
- * `X-Forwarded-For`, else `X-Real-IP`, else a stable placeholder so a missing header
- * shares one bucket rather than bypassing the limit. Spoofable by design (spec 0005).
+ * Headers Vercel populates with the client IP, in trust order. `x-vercel-forwarded-for`
+ * is set by the edge and — unlike `x-forwarded-for` — cannot be overwritten by a userland
+ * proxy layered on top of the deployment, so it is preferred (Vercel request-headers docs).
+ */
+const IP_HEADERS = ["x-vercel-forwarded-for", "x-forwarded-for", "x-real-ip"] as const;
+
+/**
+ * Best-effort client IP for the per-IP bucket, read from the platform's forwarding headers
+ * in trust order. The platform appends the real client IP as the right-most hop, so we take
+ * that hop rather than the left-most one — values to its left are caller-supplied and would
+ * otherwise let a client rotate the header to dodge the per-IP cap. Falls back through the
+ * headers, then a stable placeholder so a missing header shares one bucket rather than
+ * bypassing the limit. Still not a defense against a determined spoofer (spec 0005).
  */
 export function clientIp(req: IpHeaders): string {
-  const forwarded = req.headers["x-forwarded-for"];
-  const firstHop = (Array.isArray(forwarded) ? forwarded[0] : forwarded)?.split(",")[0]?.trim();
-  if (firstHop) {
-    return firstHop;
+  for (const header of IP_HEADERS) {
+    const raw = req.headers[header];
+    const value = Array.isArray(raw) ? raw[raw.length - 1] : raw;
+    const lastHop = value?.split(",").pop()?.trim();
+    if (lastHop) {
+      return lastHop;
+    }
   }
-
-  const realIp = req.headers["x-real-ip"];
-  const real = (Array.isArray(realIp) ? realIp[0] : realIp)?.trim();
-  return real || "unknown";
+  return "unknown";
 }
