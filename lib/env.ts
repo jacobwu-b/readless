@@ -27,9 +27,22 @@ export const config = {
   RATE_LIMIT_GLOBAL_PER_DAY: getIntEnv("RATE_LIMIT_GLOBAL_PER_DAY", 100),
 };
 
+/**
+ * A required piece of server configuration is absent. Distinct from a runtime
+ * failure so callers can tell a misconfigured deployment (missing API key — a 500
+ * the operator must fix) apart from a genuine downstream failure the user can retry
+ * (issue #53). Thrown lazily at the boundary that needs the config, never at import.
+ */
+export class ConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ConfigError";
+  }
+}
+
 export function validateAnthropicConfig() {
   if (!config.ANTHROPIC_API_KEY) {
-    throw new Error(
+    throw new ConfigError(
       "Missing Anthropic configuration: ANTHROPIC_API_KEY is required"
     );
   }

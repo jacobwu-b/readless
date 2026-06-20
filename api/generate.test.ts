@@ -9,6 +9,7 @@ import type { CounterClient, KVClient } from "../lib/kv.js";
 // Anthropic client and needs no ANTHROPIC_API_KEY (issue #29).
 import handler from "./generate.js";
 import { BriefGenerationError } from "../lib/generate.js";
+import { ConfigError } from "../lib/env.js";
 import { keys } from "../lib/kv.js";
 import { cacheKey } from "../lib/cache.js";
 
@@ -261,6 +262,32 @@ test("POST /api/generate returns 502 when generation fails", async () => {
   );
 
   assert.strictEqual(res.statusCode, 502);
+});
+
+test("POST /api/generate returns 500 when the server is missing its Anthropic config", async () => {
+  // A missing ANTHROPIC_API_KEY is a server misconfiguration, not a generation
+  // failure (issue #53): on Vercel a key left in .env.local never reaches the
+  // runtime, so generateBrief throws a ConfigError at the Anthropic boundary. It
+  // must surface as a distinct 500 with an actionable message, not the opaque 502
+  // that "the model failed, try again" implies — retrying never fixes a missing key.
+  const generate = async () => {
+    throw new ConfigError("Missing Anthropic configuration: ANTHROPIC_API_KEY is required");
+  };
+  const res = fakeRes();
+
+  await handler(
+    req("POST", { title: "Democracy and Equality" }),
+    res as unknown as VercelResponse,
+    generate,
+    fakeClient()
+  );
+
+  assert.strictEqual(res.statusCode, 500);
+  assert.notStrictEqual(
+    (res.body as { error: string }).error,
+    "Brief generation failed",
+    "a config error must not masquerade as a generation failure"
+  );
 });
 
 test("POST /api/generate returns 502 when generation throws an unexpected error", async () => {
