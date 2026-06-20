@@ -54,8 +54,28 @@ const defaultClient = kv as unknown as KVClient;
 // Same widening for the counter ops — `kv.incr`/`kv.expire` exist on the real client.
 const defaultCounterClient = kv as unknown as CounterClient;
 
+let kvConfigChecked = false;
+
+/**
+ * Assert KV is configured before the first real-client operation, so a missing
+ * `KV_REST_API_URL`/`KV_REST_API_TOKEN` fails fast with a clear message (issue #26)
+ * instead of an opaque error deep in `@vercel/kv`. A no-op when a client is injected:
+ * tests pass their own fake and never touch the real datastore, so the check — and the
+ * `env.ts` import it pulls in — stays off the test path. Memoized: validated once per
+ * process. `env.ts` is imported lazily so this module's importers don't eagerly trip
+ * `env.ts`'s own required-var checks just by depending on the KV helpers.
+ */
+async function ensureKVConfig(client: object): Promise<void> {
+  if (kvConfigChecked) return;
+  if (client !== defaultClient && client !== defaultCounterClient) return;
+  const { validateKVConfig } = await import("./env");
+  validateKVConfig();
+  kvConfigChecked = true;
+}
+
 /** Read a JSON value by key. Returns `null` when the key is absent. */
 export async function get<T>(key: string, client: KVClient = defaultClient): Promise<T | null> {
+  await ensureKVConfig(client);
   return client.get<T>(key);
 }
 
@@ -65,6 +85,7 @@ export async function set(
   value: unknown,
   client: KVClient = defaultClient
 ): Promise<void> {
+  await ensureKVConfig(client);
   await client.set(key, value);
 }
 
@@ -77,6 +98,7 @@ export async function addToIndex(
   entry: unknown,
   client: KVClient = defaultClient
 ): Promise<void> {
+  await ensureKVConfig(client);
   await client.hset(keys.gallery, { [slug]: entry });
 }
 
@@ -85,11 +107,13 @@ export async function addToIndex(
  * that lets `listBriefs` skip per-slug full-brief fetches. Empty when the index is unset.
  */
 export async function listIndex<T>(client: KVClient = defaultClient): Promise<Record<string, T>> {
+  await ensureKVConfig(client);
   return ((await client.hgetall(keys.gallery)) as Record<string, T> | null) ?? {};
 }
 
 /** List every slug present in the gallery index. Order is unspecified. */
 export async function indexSlugs(client: KVClient = defaultClient): Promise<string[]> {
+  await ensureKVConfig(client);
   return client.hkeys(keys.gallery);
 }
 
@@ -98,6 +122,7 @@ export async function indexSlugs(client: KVClient = defaultClient): Promise<stri
  * gallery-index backfill (ADR-0005) and removed with the follow-up cleanup.
  */
 export async function legacyIndexSlugs(client: KVClient = defaultClient): Promise<string[]> {
+  await ensureKVConfig(client);
   return client.smembers(keys.index);
 }
 
@@ -106,6 +131,7 @@ export async function incr(
   key: string,
   client: CounterClient = defaultCounterClient
 ): Promise<number> {
+  await ensureKVConfig(client);
   return client.incr(key);
 }
 
@@ -115,5 +141,6 @@ export async function expire(
   seconds: number,
   client: CounterClient = defaultCounterClient
 ): Promise<void> {
+  await ensureKVConfig(client);
   await client.expire(key, seconds);
 }

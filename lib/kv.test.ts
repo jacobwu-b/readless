@@ -4,6 +4,12 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
+// The real-client path validates KV config by importing env.ts, which requires
+// ANTHROPIC_API_KEY at load. Set it so the missing-config test reaches the KV check
+// (the rest of the suite injects fakes and never imports env). Mirrors the pattern
+// in ratelimit.test.ts.
+process.env.ANTHROPIC_API_KEY ||= "test-key";
+
 import {
   keys,
   get,
@@ -135,6 +141,23 @@ test("legacyIndexSlugs reads the retired briefs:index set for the migration", as
   client.sets.set(keys.index, new Set(["atomic-habits", "deep-work"]));
 
   assert.deepStrictEqual((await legacyIndexSlugs(client)).sort(), ["atomic-habits", "deep-work"]);
+});
+
+test("a helper using the real client fails fast with a clear error when KV is unconfigured", async () => {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  try {
+    delete process.env.KV_REST_API_URL;
+    delete process.env.KV_REST_API_TOKEN;
+
+    // No injected client → the real-client path runs validateKVConfig before touching
+    // @vercel/kv, so misconfiguration surfaces as a clear message, not an opaque SDK
+    // failure. Regression guard for issue #26.
+    await assert.rejects(() => get(keys.brief("atomic-habits")), /Missing Vercel KV configuration/);
+  } finally {
+    if (url !== undefined) process.env.KV_REST_API_URL = url;
+    if (token !== undefined) process.env.KV_REST_API_TOKEN = token;
+  }
 });
 
 /**
