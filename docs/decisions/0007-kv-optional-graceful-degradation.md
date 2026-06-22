@@ -56,7 +56,9 @@ the product's baseline content rather than just a pre-generation placeholder.
 
 **Negative**
 - Without KV, generated briefs are **ephemeral**: not persisted, absent from the gallery, and visible
-  only in the generating session (via `sessionStorage`).
+  only in the generating session (via `sessionStorage`). *(Superseded by ADR-0009: the frontend now
+  persists generated briefs to `localStorage` so they appear in the generating browser's gallery and
+  survive refresh. They remain per-browser — not cross-device — until KV is provisioned.)*
 - Without KV, the daily rate limits and global spend cap (spec 0005 / ADR-0003) **cannot be
   enforced** — `ANTHROPIC_API_KEY` presence is the only gate on model spend. Acceptable only because
   the unconfigured-KV deployment is single-operator and low-traffic; standing up KV restores the cap.

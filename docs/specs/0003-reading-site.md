@@ -40,6 +40,10 @@ site needs a submission surface and a single data-driven render path for briefs 
 - [ ] `index.html` populates the grid from `/api/briefs` and preserves search, filter, and category
       behavior.
 - [ ] On successful generation, the submit flow routes to `brief.html?slug=…`.
+- [ ] When KV is unconfigured (ADR-0007), a brief the visitor generates persists in their browser
+      (`localStorage`): it appears in their gallery merged on top of `/api/briefs` (API/KV winning on
+      slug), survives a refresh, and its permalink renders after a refresh — see ADR-0009. This is
+      per-browser, not cross-device.
 
 ## Non-goals / out of scope
 
@@ -55,7 +59,9 @@ Milestone-1 demo render target); `brief.html` is the permalink view that fetches
 
 ## Out of scope
 
-- Client-side caching of API responses beyond the browser default.
+- Client-side caching of API responses beyond the browser default. (Distinct from the no-KV
+  `localStorage` persistence of *generated* briefs above, which is a fallback store, not response
+  caching — ADR-0009.)
 
 ## Open questions
 

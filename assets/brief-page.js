@@ -20,11 +20,13 @@ async function load() {
   }
   slug = slug.trim();
 
-  // A just-generated brief may live only in sessionStorage when KV is unconfigured
-  // and nothing was persisted (issue #49). Render it directly before falling back to
-  // the API, which is the source of truth for seeded and persisted briefs.
+  // A just-generated brief may live only in localStorage when KV is unconfigured and
+  // nothing was persisted server-side (ADR-0007/0009). Render it directly before falling
+  // back to the API, which is the source of truth for seeded and persisted briefs.
+  // localStorage (not sessionStorage) so the permalink survives a refresh and matches
+  // the gallery's fallback source — written by assets/generate.js.
   try {
-    var cached = sessionStorage.getItem('brief:' + slug);
+    var cached = localStorage.getItem('brief:' + slug);
     if (cached) {
       var stashed = JSON.parse(cached);
       loadingEl.hidden = true;

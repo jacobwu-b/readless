@@ -13,6 +13,25 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+// When KV is unconfigured the API returns only seeds (ADR-0007), so briefs this browser
+// generated live only in localStorage (ADR-0009). Merge them under the API list with the
+// same precedence lib/store.ts listBriefs uses — an API/KV entry wins on slug — so a brief
+// that later persists server-side never double-renders. Keys mirror assets/generate.js.
+function mergeLocalBriefs(apiBooks) {
+  let local;
+  try {
+    const raw = localStorage.getItem('briefs:local');
+    local = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return apiBooks; // storage unavailable or corrupt — the API list stands
+  }
+  if (!Array.isArray(local) || local.length === 0) return apiBooks;
+
+  const seen = new Set(apiBooks.map(b => b.slug));
+  const extras = local.filter(entry => entry && entry.slug && !seen.has(entry.slug));
+  return apiBooks.concat(extras);
+}
+
 async function init() {
   try {
     const res = await fetch('/api/briefs');
@@ -23,6 +42,8 @@ async function init() {
       `<div class="empty"><p>Couldn’t load the library. Please refresh.</p></div>`;
     return;
   }
+
+  allBooks = mergeLocalBriefs(allBooks);
 
   // Build category filters
   const categories = [...new Set(allBooks.map(b => b.category))].sort();
