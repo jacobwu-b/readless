@@ -16,7 +16,7 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@vercel/node": "^5.0.0",
+    "@vercel/node": "^5.10.2",
     "node-html-parser": "^7.0.1",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
