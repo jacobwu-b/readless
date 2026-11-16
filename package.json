@@ -22,6 +22,7 @@
     "typescript": "^5.7.0"
   },
   "overrides": {
-    "undici": "^6.28.1"
+    "undici": "^6.28.1",
+    "@vercel/nft": "^1.11.2"
   }
 }
